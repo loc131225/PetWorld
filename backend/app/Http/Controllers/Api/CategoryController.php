@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::whereNull('parent_id')
+        $categoriesTree = Category::whereNull('parent_id')
             ->where('status', 1)
             ->with(['children' => function ($query) {
                 $query->where('status', 1)->take(6);
@@ -31,6 +31,6 @@ class CategoryController extends Controller
                 ];
             });
 
-        return response()->json($categories);
+        return response()->json($categoriesTree);
     }
 }
