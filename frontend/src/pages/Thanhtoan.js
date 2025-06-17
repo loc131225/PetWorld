@@ -191,7 +191,7 @@ const ThanhToan = () => {
                     style={{ width: "90%" }}
                     onClick={handleAddToCart}
                   >
-                    Thêm vào giỏ hàng
+                    Đặt hàng
                   </Button>
                 </div>
 
