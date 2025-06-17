@@ -46,3 +46,10 @@ Route::prefix('admin/categories')->group(function () {
     Route::post('/{id}', [CategoryController::class, 'update']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });
+
+Route::prefix('admin/users')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::post('/{id}/toggle-status', [UserController::class, 'toggleStatus']);
+    Route::post('/{id}/toggle-role', [UserController::class, 'toggleRole']);
+});
+
