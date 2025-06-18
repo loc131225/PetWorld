@@ -1,0 +1,216 @@
+
+.category-management {
+  padding: 30px; /* Khoảng đệm xung quanh nội dung trang */
+  background-color: var(--background-color); /* Sử dụng màu nền chung */
+  flex-grow: 1; /* Cho phép trang này chiếm hết không gian còn lại */
+}
+
+/* Header của trang (tiêu đề và nút "Thêm danh mục") */
+.page-header {
+  display: flex;
+  justify-content: space-between; /* Đặt tiêu đề và nút ở hai bên */
+  align-items: center;
+  margin-bottom: 25px; /* Khoảng cách dưới header */
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.8em;
+  color: var(--text-color);
+}
+
+.add-button {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  transition: background-color 0.2s ease; /* Hiệu ứng chuyển động mượt mà khi hover */
+}
+
+.add-button:hover {
+  background-color: #0056b3; /* Màu tối hơn khi di chuột qua */
+}
+
+.add-icon {
+  margin-right: 8px; /* Khoảng cách giữa icon và chữ */
+}
+
+/* Phần tìm kiếm và bộ lọc */
+.filter-section {
+  background-color: var(--white-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Khoảng cách giữa thanh tìm kiếm và các bộ lọc */
+}
+
+.filter-section .search-bar {
+  flex-grow: 1; /* Thanh tìm kiếm chiếm hết không gian còn lại */
+}
+
+.filter-section .search-bar input[type="text"] {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 1em;
+  outline: none; /* Bỏ viền khi focus */
+}
+
+.filter-section .filters {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các dropdown và nút */
+  align-items: center;
+}
+
+.filter-section .filters select {
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--white-color);
+  font-size: 1em;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-section .filters .apply-filter-button {
+  background-color: var(--secondary-color);
+  color: var(--white-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+}
+
+.filter-section .filters .apply-filter-button:hover {
+  background-color: #5a6268; /* Màu tối hơn khi di chuột qua */
+}
+
+/* Bảng Danh mục */
+.table-container {
+  background-color: var(--white-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+.category-table {
+  width: 100%;
+  border-collapse: collapse; /* Gộp các đường viền của ô */
+  margin-bottom: 0;
+}
+
+.category-table th,
+.category-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color); /* Đường kẻ dưới mỗi hàng */
+}
+
+.category-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.category-table tbody tr:last-child td {
+  border-bottom: none; /* Không có đường kẻ dưới hàng cuối cùng */
+}
+
+.category-table tbody tr:hover {
+  background-color: #f5f5f5; /* Hiệu ứng hover cho hàng */
+}
+
+.category-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover; /* Đảm bảo ảnh hiển thị đầy đủ và không bị méo */
+  vertical-align: middle; /* Căn giữa ảnh với text */
+}
+
+.status-badge {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; /* Hình tròn */
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.status-badge.active {
+  background-color: #28a745; /* Màu xanh lá cây cho trạng thái active */
+}
+/* Bạn có thể thêm các class .status-badge.inactive, .status-badge.pending với màu khác */
+
+.actions {
+  white-space: nowrap; /* Đảm bảo các nút tác vụ không bị xuống dòng */
+}
+
+.action-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin: 0 3px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: #e9ecef;
+}
+
+.view-button {
+  color: #007bff; /* Màu xanh dương cho nút xem */
+}
+
+.edit-button {
+  color: #ffc107; /* Màu vàng cho nút sửa */
+}
+
+.delete-button {
+  color: #dc3545; /* Màu đỏ cho nút xóa */
+}
+
+/* Phân trang */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.pagination button {
+  background-color: var(--white-color);
+  border: 1px solid var(--border-color);
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination button.active {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-color: var(--primary-color);
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #e9ecef;
+}
