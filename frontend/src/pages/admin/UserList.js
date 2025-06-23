@@ -91,63 +91,66 @@ const UserList = () => {
   });
 
   return (
-    <div className="user-management">
-      <div className="user-filter">
-        <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-          <option value="all">Lọc người dùng ▼</option>
-          <option value="Quản trị viên">Quản trị viên</option>
-          <option value="Khách hàng">Khách hàng</option>
-        </select>
-        <input
-          type="text"
-          placeholder="🔍 Tìm kiếm thông tin"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div className="user-management" style={{ flex: 1, padding: '20px' }}>
+        <div className="user-filter">
+          <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+            <option value="all">Lọc người dùng ▼</option>
+            <option value="Quản trị viên">Quản trị viên</option>
+            <option value="Khách hàng">Khách hàng</option>
+          </select>
+          <input
+            type="text"
+            placeholder="🔍 Tìm kiếm thông tin"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Số điện thoại</th>
-            <th>Họ và tên</th>
-            <th>Email</th>
-            <th>Loại tài khoản</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.phone}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>
-                <span
-                  className={
-                    user.accountType === 'Quản trị viên'
-                      ? 'badge admin'
-                      : 'badge customer'
-                  }
-                >
-                  {user.accountType}
-                </span>
-              </td>
-              <td>
-                <button
-                  className={
-                    user.status === 'active' ? 'btn active' : 'btn inactive'
-                  }
-                >
-                  {user.status === 'active' ? 'Kích hoạt' : 'Vô hiệu hoá'}
-                </button>
-              </td>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Số điện thoại</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Loại tài khoản</th>
+              <th>Thao tác</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.phone}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>
+                  <span
+                    className={
+                      user.accountType === 'Quản trị viên'
+                        ? 'badge admin'
+                        : 'badge customer'
+                    }
+                  >
+                    {user.accountType}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className={
+                      user.status === 'active' ? 'btn active' : 'btn inactive'
+                    }
+                  >
+                    {user.status === 'active' ? 'Kích hoạt' : 'Vô hiệu hoá'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,9 @@
 .user-management {
   padding: 20px;
+  margin-left: 250px;
   font-family: sans-serif;
 }
+
 
 .user-filter {
   display: flex;
