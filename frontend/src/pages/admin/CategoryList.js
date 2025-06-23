@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import '../../css/CategoryList.css'; // Import CSS riêng cho trang CategoryList
-import { FaPlus, FaEye, FaPencilAlt, FaTrashAlt } from 'react-icons/fa'; // Import icons cần thiết
+import '../../css/CategoryList.css';
 
 const CategoryList = () => {
   // State để quản lý giá trị của thanh tìm kiếm
@@ -66,7 +65,7 @@ const CategoryList = () => {
       <div className="page-header">
         <h2>Quản lý danh mục: Danh sách danh mục</h2>
         <button className="add-button">
-          <FaPlus className="add-icon" />
+          {/* <FaPlus className="add-icon" /> */}
           Thêm danh mục
         </button>
       </div>
@@ -127,13 +126,13 @@ const CategoryList = () => {
                 </td>
                 <td className="actions">
                   <button className="action-button view-button" title="Xem">
-                    <FaEye />
+                    {/* <FaEye /> */}
                   </button>
                   <button className="action-button edit-button" title="Sửa">
-                    <FaPencilAlt />
+                    {/* <FaPencilAlt /> */}
                   </button>
                   <button className="action-button delete-button" title="Xóa">
-                    <FaTrashAlt />
+                    {/* <FaTrashAlt /> */}
                   </button>
                 </td>
               </tr>
