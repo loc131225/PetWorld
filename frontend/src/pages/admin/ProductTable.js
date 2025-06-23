@@ -27,6 +27,36 @@ const ProductTable = () => {
       date: '31/05/2005',
       status: false,
     },
+    {
+      id: 3,
+      image: '/images/product1.jpg',
+      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
+      price: 289000,
+      discountPrice: 289000,
+      quantity: 30,
+      date: '31/05/2005',
+      status: true,
+    },
+    {
+      id: 4,
+      image: '/images/product1.jpg',
+      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
+      price: 289000,
+      discountPrice: 289000,
+      quantity: 30,
+      date: '31/05/2005',
+      status: true,
+    },
+    {
+      id: 5,
+      image: '/images/product1.jpg',
+      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
+      price: 289000,
+      discountPrice: 289000,
+      quantity: 30,
+      date: '31/05/2005',
+      status: true,
+    },
   ];
 
   const filteredProducts = products.filter((product) =>
@@ -92,6 +122,13 @@ const ProductTable = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="pagination">
+        <button>&lt;</button> {/* Nút Trang trước */}
+        <button className="active">1</button> {/* Trang hiện tại */}
+        <button>2</button>
+        <button>3</button>
+        <button>&gt;</button> {/* Nút Trang kế tiếp */}
       </div>
     </div>
   );
