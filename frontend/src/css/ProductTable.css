@@ -1,0 +1,61 @@
+.product-table-container {
+  padding: 20px;
+  margin-left: 250px; /* nếu có sidebar */
+}
+
+.product-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.product-controls input,
+.product-controls select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-add {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.btn-save {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.product-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.action-icon {
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.product-name {
+  text-align: left;
+  color: #007bff;
+}
