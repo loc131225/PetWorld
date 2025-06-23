@@ -10,6 +10,8 @@ import ProductTable from './pages/admin/ProductTable';
 import UserList from './pages/admin/UserList';
 import ProductDetail from './pages/users/ProductDetail';
 import Timkiem from './pages/users/Timkiem';
+import Sidebar from './pages/admin/Sidebar';
+
 
 function App() {
   return <>
@@ -23,6 +25,7 @@ function App() {
       <Route path='UserList' element={<UserList/>}/>
       <Route path='ProductDetail' element={<ProductDetail/>}/>
       <Route path='Timkiem' element={<Timkiem/>}/>
+      <Route path='Sidebar' element={<Sidebar/>}/>
     </Route>
   </Routes>
   </>;
