@@ -1,8 +1,9 @@
 
 .category-management {
-  padding: 30px; /* Khoảng đệm xung quanh nội dung trang */
-  background-color: var(--background-color); /* Sử dụng màu nền chung */
-  flex-grow: 1; /* Cho phép trang này chiếm hết không gian còn lại */
+  padding: 30px;
+  margin-left: 250px;
+  background-color: var(--background-color); 
+  flex-grow: 1; 
 }
 
 /* Header của trang (tiêu đề và nút "Thêm danh mục") */
@@ -213,4 +214,101 @@
 
 .pagination button:hover:not(.active) {
   background-color: #e9ecef;
+}
+/* Căn giữa toàn bộ nội dung bảng */
+.category-table {
+  text-align: center;
+}
+
+.category-table th,
+.category-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Căn giữa ảnh trong ô */
+.category-image {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Căn giữa các nút tác vụ */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+/* Tùy chỉnh thanh tìm kiếm để hiện đại và đẹp mắt hơn */
+.search-bar input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  outline: none;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Hiệu ứng khi người dùng focus vào ô tìm kiếm */
+.search-bar input[type="text"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Hiệu ứng viền xanh nhẹ */
+}
+
+/* Responsive nếu cần: giữ cho thanh tìm kiếm hiển thị đẹp trên màn nhỏ */
+@media (max-width: 768px) {
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+}
+/* Nâng cấp giao diện cho dropdown (select) */
+.filter-section .filters select {
+  padding: 10px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1em;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Hiệu ứng khi hover và focus dropdown */
+.filter-section .filters select:hover,
+.filter-section .filters select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  outline: none;
+}
+
+/* Nút "Lưu bộ lọc" */
+.apply-filter-button {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Hiệu ứng khi hover nút "Lưu bộ lọc" */
+.apply-filter-button:hover {
+  background-color: #495057;
+  box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.2);
 }
