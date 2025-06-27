@@ -1,344 +1,40 @@
-.category-management {
-  padding: 30px;
-  margin-left: 250px;
-  background-color: var(--background-color); 
-  flex-grow: 1; 
-}
-
-/* Header của trang (tiêu đề và nút "Thêm danh mục") */
-.page-header {
-  display: flex;
-  justify-content: space-between; /* Đặt tiêu đề và nút ở hai bên */
-  align-items: center;
-  margin-bottom: 25px; /* Khoảng cách dưới header */
-}
-
-.page-header h2 {
-  margin: 0;
-  font-size: 1.8em;
-  color: var(--text-color);
-}
-
-.add-button {
-  background-color: var(--primary-color);
-  color: var(--white-color);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  font-size: 1em;
-  transition: background-color 0.2s ease; /* Hiệu ứng chuyển động mượt mà khi hover */
-}
-
-.add-button:hover {
-  background-color: #0056b3; /* Màu tối hơn khi di chuột qua */
-}
-
-.add-icon {
-  margin-right: 8px; /* Khoảng cách giữa icon và chữ */
-}
-
-/* Phần tìm kiếm và bộ lọc */
-.filter-section {
-  background-color: var(--white-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
-  margin-bottom: 25px;
-  display: flex;
-  align-items: center;
-  gap: 20px; /* Khoảng cách giữa thanh tìm kiếm và các bộ lọc */
-}
-
-.filter-section .search-bar {
-  flex-grow: 1; /* Thanh tìm kiếm chiếm hết không gian còn lại */
-}
-
-.filter-section .search-bar input[type="text"] {
-  width: 100%;
-  padding: 10px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 1em;
-  outline: none; /* Bỏ viền khi focus */
-}
-
-.filter-section .filters {
-  display: flex;
-  gap: 10px; /* Khoảng cách giữa các dropdown và nút */
-  align-items: center;
-}
-
-.filter-section .filters select {
-  padding: 10px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background-color: var(--white-color);
-  font-size: 1em;
-  cursor: pointer;
-  outline: none;
-}
-
-.filter-section .filters .apply-filter-button {
-  background-color: var(--secondary-color);
-  color: var(--white-color);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s ease;
-}
-
-.filter-section .filters .apply-filter-button:hover {
-  background-color: #5a6268; /* Màu tối hơn khi di chuột qua */
-}
-
-/* Bảng Danh mục */
-.table-container {
-  background-color: var(--white-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
-}
-
-.category-table {
-  width: 100%;
-  border-collapse: collapse; /* Gộp các đường viền của ô */
-  margin-bottom: 0;
-}
-
-.category-table th,
-.category-table td {
-  padding: 15px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-color); /* Đường kẻ dưới mỗi hàng */
-}
-
-.category-table th {
-  background-color: #f2f2f2;
-  font-weight: 600;
-  color: var(--text-color);
-  text-transform: uppercase;
-  font-size: 0.9em;
-}
-
-.category-table tbody tr:last-child td {
-  border-bottom: none; /* Không có đường kẻ dưới hàng cuối cùng */
-}
-
-.category-table tbody tr:hover {
-  background-color: #f5f5f5; /* Hiệu ứng hover cho hàng */
-}
-
-.category-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover; /* Đảm bảo ảnh hiển thị đầy đủ và không bị méo */
-  vertical-align: middle; /* Căn giữa ảnh với text */
-}
-
-.status-badge {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%; /* Hình tròn */
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.status-badge.active {
-  background-color: #28a745; /* Màu xanh lá cây cho trạng thái active */
-}
-/* Bạn có thể thêm các class .status-badge.inactive, .status-badge.pending với màu khác */
-
-.actions {
-  white-space: nowrap; /* Đảm bảo các nút tác vụ không bị xuống dòng */
-}
-
-.action-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin: 0 3px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.action-button:hover {
-  background-color: #e9ecef;
-}
-
-.view-button {
-  color: #007bff; /* Màu xanh dương cho nút xem */
-}
-
-.edit-button {
-  color: #ffc107; /* Màu vàng cho nút sửa */
-}
-
-.delete-button {
-  color: #dc3545; /* Màu đỏ cho nút xóa */
-}
-
-/* Phân trang */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 25px;
-}
-
-.pagination button {
-  background-color: var(--white-color);
-  border: 1px solid var(--border-color);
-  padding: 8px 15px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.pagination button.active {
-  background-color: var(--primary-color);
-  color: var(--white-color);
-  border-color: var(--primary-color);
-}
-
-.pagination button:hover:not(.active) {
-  background-color: #e9ecef;
-}
-/* Căn giữa toàn bộ nội dung bảng */
-.category-table {
-  text-align: center;
-}
-
-.category-table th,
-.category-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* Căn giữa ảnh trong ô */
-.category-image {
-  display: block;
-  margin: 0 auto;
-}
-
-/* Căn giữa các nút tác vụ */
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-/* Tùy chỉnh thanh tìm kiếm để hiện đại và đẹp mắt hơn */
-.search-bar input[type="text"] {
-  width: 100%;
-  padding: 12px 20px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1em;
-  outline: none;
-  background-color: #fff;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Hiệu ứng khi người dùng focus vào ô tìm kiếm */
-.search-bar input[type="text"]:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Hiệu ứng viền xanh nhẹ */
-}
-
-/* Responsive nếu cần: giữ cho thanh tìm kiếm hiển thị đẹp trên màn nhỏ */
-@media (max-width: 768px) {
-  .filter-section {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filters {
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .search-bar {
-    width: 100%;
-  }
-}
-/* Nâng cấp giao diện cho dropdown (select) */
-.filter-section .filters select {
-  padding: 10px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: #fff;
-  font-size: 1em;
-  color: var(--text-color);
-  cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-/* Hiệu ứng khi hover và focus dropdown */
-.filter-section .filters select:hover,
-.filter-section .filters select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
-  outline: none;
-}
-
-/* Nút "Lưu bộ lọc" */
-.apply-filter-button {
-  background-color: var(--secondary-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1em;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-/* Hiệu ứng khi hover nút "Lưu bộ lọc" */
-.apply-filter-button:hover {
-  background-color: #495057;
-  box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.2);
-}
-
-
-.voucher-header {
+/* Header luôn full width */
+.global-header {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  background-color: #fff;
+  background-color: #ffffff;
   border-bottom: 1px solid #eee;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
-.icon {
+/* Icon trong header */
+.global-icon {
   font-size: 18px;
   margin-right: 15px;
   color: #555;
   cursor: pointer;
 }
 
-.icon.red {
-  color: #000000;
+.global-icon.red {
+  color: #000;
 }
 
-.spacer {
+.global-spacer {
   flex: 1;
 }
 
-.user {
+.global-user-group {
+  display: flex;
+  align-items: center;
+}
+
+.global-user {
   margin-right: 10px;
   font-weight: 500;
   color: #333;
@@ -349,4 +45,117 @@
   width: 30px;
   height: 30px;
   object-fit: cover;
+}
+
+/* Container content (phần main) */
+.category-container {
+  padding: 20px;
+  width: 100%;
+  margin-left: 250px; /* Nếu có sidebar */
+  padding-top: 80px; /* Để chừa header fixed */
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* Toolbar */
+.category-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.category-toolbar input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.add-btn {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Table */
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.category-table th,
+.category-table td {
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.category-table th {
+  color: #555;
+  font-weight: bold;
+  background-color: #f2f2f2;
+}
+
+.category-table td a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.category-table td a:hover {
+  text-decoration: underline;
+}
+
+.category-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Icon trong bảng */
+.icon {
+  font-size: 18px;
+  margin: 0 5px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.icon:hover {
+  color: #0d6efd;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #eee;
+}
+
+.pagination button.active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
 }

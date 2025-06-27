@@ -112,7 +112,7 @@ const UserList = () => {
         <div className="user-management" style={{ padding: '20px' }}>
           <div className="user-filter">
             <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-              <option value="all">Lọc người dùng ▼</option>
+              <option value="all">Lọc người dùng </option>
               <option value="Quản trị viên">Quản trị viên</option>
               <option value="Khách hàng">Khách hàng</option>
             </select>
