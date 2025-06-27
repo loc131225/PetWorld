@@ -1,8 +1,16 @@
-import axios from "axios";
+// // src/api/productApi.js
+// import axios from 'axios';
 
-const API_URL = "http://localhost:5000/api";
+// const API_BASE_URL = 'http://localhost:8000/api'; // sửa nếu dùng domain khác
 
-export const getProductById = async (id) => {
-  const res = await axios.get(`${API_URL}/products/${id}`);
-  return res.data;
-};
+// export const searchProducts = async (keyword) => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}/search`, {
+//       params: { q: keyword }
+//     });
+//     return response.data; // giả sử trả về mảng sản phẩm
+//   } catch (error) {
+//     console.error('Lỗi tìm kiếm:', error);
+//     throw error;
+//   }
+// };

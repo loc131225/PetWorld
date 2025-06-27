@@ -1,0 +1,87 @@
+/* src/css/VoucherTable.css */
+.voucher-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.voucher-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.voucher-header .icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.voucher-header .red {
+  color: red;
+}
+
+.voucher-header .spacer {
+  flex-grow: 1;
+}
+
+.voucher-header .user {
+  font-weight: bold;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.voucher-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.voucher-filter, .voucher-search {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.voucher-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.voucher-table th, .voucher-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.voucher-table th {
+  background-color: #f4f4f4;
+}
+
+.date.start {
+  background: #3498db;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.date.end {
+  background: #e74c3c;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.icon.edit {
+  color: #2980b9;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.icon.delete {
+  color: #c0392b;
+  cursor: pointer;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   FaUser,
   FaGift,
@@ -21,17 +22,68 @@ const Sidebar = () => {
         <h1>Adminator</h1>
       </div>
       <ul className="sidebar-menu">
-        <li><FaChartBar className="icon" /><span className="text">Thống kê</span></li>
-        <li><FaUser className="icon" /><span className="text">Quản lý tài khoản</span></li>
-        <li><FaGift className="icon" /><span className="text">Quản lý voucher</span></li>
-        <li><FaComments className="icon" /><span className="text">Quản lý bình luận</span></li>
-        <li><FaList className="icon" /><span className="text">Quản lý danh mục bv</span></li>
-        <li><FaPen className="icon" /><span className="text">Quản lý bài viết</span></li>
-        <li><FaDog className="icon" /><span className="text">Quản lý thú cưng</span></li>
-        <li><FaShoppingCart className="icon" /><span className="text">Quản lý đơn hàng</span></li>
-        <li><FaEnvelope className="icon" /><span className="text">Quản lý liên hệ</span></li>
-        
-      </ul>
+  <li>
+    <NavLink to="/dashboard" className="menu-link">
+      <FaChartBar className="icon" />
+      <span className="text">Thống kê</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/UserList" className="menu-link">
+      <FaUser className="icon" />
+      <span className="text">Quản lý tài khoản</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/CategoryList" className="menu-link">
+      <FaList className="icon" />
+      <span className="text">Quản lý danh mục</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/ProductTable" className="menu-link">
+      <FaShoppingCart className="icon" />
+      <span className="text">Quản lý sản phẩm</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/vouchers" className="menu-link">
+      <FaGift className="icon" />
+      <span className="text">Quản lý voucher</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/comments" className="menu-link">
+      <FaComments className="icon" />
+      <span className="text">Quản lý bình luận</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/posts" className="menu-link">
+      <FaPen className="icon" />
+      <span className="text">Quản lý bài viết</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/pets" className="menu-link">
+      <FaDog className="icon" />
+      <span className="text">Quản lý thú cưng</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/orders" className="menu-link">
+      <FaShoppingCart className="icon" />
+      <span className="text">Quản lý đơn hàng</span>
+    </NavLink>
+  </li>
+  <li>
+    <NavLink to="/contacts" className="menu-link">
+      <FaEnvelope className="icon" />
+      <span className="text">Quản lý liên hệ</span>
+    </NavLink>
+  </li>
+</ul>
+
     </div>
   );
 };

@@ -4,7 +4,6 @@
   position: fixed;
   background-color: #fff;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-  padding-top: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -56,4 +55,22 @@
   font-size: 15px;
   color: #333;
   white-space: nowrap;
+}
+.menu-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.menu-link:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-link.active {
+  background-color: #e0f2f1;
+  color: #00796b;
 }

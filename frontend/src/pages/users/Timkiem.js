@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// import { searchProducts } from '../../api/productApi';
 import '../../css/TimKiem.css'; // Import CSS riêng cho trang tìm kiếm
 
 const TimKiem = () => {
