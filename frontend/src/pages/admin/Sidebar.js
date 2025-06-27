@@ -23,7 +23,7 @@ const Sidebar = () => {
       </div>
       <ul className="sidebar-menu">
   <li>
-    <NavLink to="/dashboard" className="menu-link">
+    <NavLink to="/Dashboard" className="menu-link">
       <FaChartBar className="icon" />
       <span className="text">Thống kê</span>
     </NavLink>

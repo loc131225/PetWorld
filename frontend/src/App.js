@@ -2,7 +2,6 @@ import logo from './logo.svg';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-
 import ThanhToan from './pages/users/Thanhtoan';
 import LoginRegister from './pages/users/Loginregister';
 import Home from './pages/users/Home';
@@ -14,7 +13,7 @@ import ProductDetail from './pages/users/ProductDetail';
 import Timkiem from './pages/users/Timkiem';
 import Sidebar from './pages/admin/Sidebar';
 import VoucherTable from './pages/admin/VoucherTable';
-// import Header from './pages/admin/Header';
+import Dashboard from './pages/admin/Dashboard';
 
 
 
@@ -33,6 +32,7 @@ function App() {
       <Route path='Timkiem' element={<Timkiem/>}/>
       <Route path='Sidebar' element={<Sidebar/>}/>
       <Route path='VoucherTable' element={<VoucherTable/>}/>
+      <Route path='Dashboard' element={<Dashboard/>}/>
     </Route>
   </Routes>
   </>;
