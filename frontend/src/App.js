@@ -14,6 +14,7 @@ import ProductDetail from './pages/users/ProductDetail';
 import Timkiem from './pages/users/Timkiem';
 import Sidebar from './pages/admin/Sidebar';
 import VoucherTable from './pages/admin/VoucherTable';
+// import Header from './pages/admin/Header';
 
 
 
@@ -21,6 +22,7 @@ function App() {
   return <>
   <Routes>
     <Route path=''>
+      {/* <Route path='Header' element={<Header/>}/> */}
       <Route path='thanhtoan' element={<ThanhToan/>}/>
       <Route path='home' element={<Home/>}/>
       <Route path='cart' element={<Cart/>}/>

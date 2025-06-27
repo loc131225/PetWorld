@@ -1,87 +1,140 @@
-/* src/css/VoucherTable.css */
-.voucher-container {
+/* Container */
+.voucher-controls {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+/* Dropdown lọc */
+.voucher-filter {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Ô tìm kiếm */
+.voucher-search {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Bảng voucher */
+.voucher-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Tiêu đề bảng */
+.voucher-table th {
+  background-color: #f5f5f5;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+/* Hàng dữ liệu */
+.voucher-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+/* Mã khuyến mãi đậm */
+.voucher-table td b {
+  font-weight: bold;
+}
+
+/* Icon thao tác */
+.icon.edit,
+.icon.delete {
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  transition: color 0.2s;
+}
+
+.icon.edit:hover {
+  color: #007bff;
+}
+
+.icon.delete:hover {
+  color: #dc3545;
+}
+
+/* Ngày */
+.date {
+  font-size: 13px;
+  color: #555;
+}
+
+/* Responsive (nếu cần) */
+@media (max-width: 768px) {
+  .voucher-controls {
+    flex-direction: column;
+  }
+
+  .voucher-search {
+    width: 100%;
+  }
+
+  .voucher-table th,
+  .voucher-table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+
+.layout {
+  display: flex;
+}
+
+.main-content {
+  margin-left: 250px; /* Đẩy nội dung sang phải theo độ rộng của sidebar */
   padding: 20px;
-  font-family: Arial, sans-serif;
+  width: calc(100% - 250px);
+  box-sizing: border-box;
 }
 
 .voucher-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.voucher-header .icon {
-  font-size: 20px;
+.icon {
+  font-size: 18px;
+  margin-right: 15px;
+  color: #555;
   cursor: pointer;
 }
 
-.voucher-header .red {
-  color: red;
+.icon.red {
+  color: #000000;
 }
 
-.voucher-header .spacer {
+.spacer {
   flex-grow: 1;
 }
 
-.voucher-header .user {
-  font-weight: bold;
+.user {
+  margin-right: 10px;
+  font-weight: 500;
+  color: #333;
 }
 
 .avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-}
-
-.voucher-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.voucher-filter, .voucher-search {
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.voucher-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.voucher-table th, .voucher-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.voucher-table th {
-  background-color: #f4f4f4;
-}
-
-.date.start {
-  background: #3498db;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.date.end {
-  background: #e74c3c;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.icon.edit {
-  color: #2980b9;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.icon.delete {
-  color: #c0392b;
-  cursor: pointer;
 }

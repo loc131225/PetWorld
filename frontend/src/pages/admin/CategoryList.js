@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaEye, FaEyeSlash, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaEdit, FaTrashAlt, FaBars, FaSearch, FaBell, FaEnvelope } from 'react-icons/fa';
 import '../../css/CategoryList.css';
 import Sidebar from '../admin/Sidebar';
 
@@ -39,11 +39,26 @@ const CategoryList = () => {
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const avatarImg = 'https://i.pravatar.cc/30';
+
   return (
-    <div className="layout"> {/* Thêm layout để chứa Sidebar và nội dung chính */}
+    <div className="layout">
       <Sidebar />
 
       <div className="category-management">
+
+        {/* --- HEADER MỚI (from image) --- */}
+        <div className="voucher-header">
+          <FaBars className="icon" />
+          <FaSearch className="icon" />
+          <div className="spacer" />
+          <FaBell className="icon red" />
+          <FaEnvelope className="icon red" />
+          <div className="user">Nguyễn Trung Kiên</div>
+          <img src={avatarImg} alt="avatar" className="global-avatar" />
+        </div>
+
+        {/* --- NỘI DUNG TRANG --- */}
         <div className="page-header">
           <h2>Quản lý danh mục: Danh sách danh mục</h2>
           <button className="add-button">Thêm danh mục</button>

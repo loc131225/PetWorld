@@ -47,7 +47,7 @@ const Sidebar = () => {
     </NavLink>
   </li>
   <li>
-    <NavLink to="/vouchers" className="menu-link">
+    <NavLink to="/VoucherTable" className="menu-link">
       <FaGift className="icon" />
       <span className="text">Quản lý voucher</span>
     </NavLink>
