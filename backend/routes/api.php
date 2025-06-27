@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\VoucherController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
@@ -20,6 +21,12 @@ Route::get('/products/home-best-sellers', [ProductController::class, 'bestSellin
 Route::get('/home-news', [PostController::class, 'homeNews']);
 Route::get('/vouchers/lastest', [VoucherController::class, 'lastestVouchers']);
 Route::get('/vouchers/petworldvoucher', [VoucherController::class, 'getPetworldVoucher']);
+//tìm kiếm
+Route::get('/search', [ProductController::class, 'search']);
+// thông tin ng dùng
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::patch('/users/{id}', [UserController::class, 'update']);
 
 //Chi tiết sản phẩm
 Route::get('/products/{slug}', [ProductController::class, 'show']);
