@@ -6,9 +6,9 @@ import avatarImg from '../../assets/myden.jpg';
 const GlobalHeader = () => {
   return (
     <div className="global-header">
-      {/* Moved "TỔNG DOANH THU 1.234.567Đ" here as it appears in the global header in the final image */}
       <FaBars className="global-icon" />
       <FaSearch className="global-icon" />
+      <div className="global-spacer" />
       <FaBell className="global-icon red" />
       <FaEnvelope className="global-icon red" />
       <div className="global-user-group">
