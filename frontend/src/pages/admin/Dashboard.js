@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../css/Dashboard.css';
 import { FaBars, FaSearch, FaBell, FaEnvelope } from 'react-icons/fa';
-import Sidebar from './Sidebar';
+import Sidebar from '../admin/Sidebar';
 import avatarImg from '../../assets/myden.jpg';
 const GlobalHeader = () => {
   return (

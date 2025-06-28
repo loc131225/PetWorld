@@ -14,6 +14,7 @@ import Timkiem from './pages/users/Timkiem';
 import Sidebar from './pages/admin/Sidebar';
 import VoucherTable from './pages/admin/VoucherTable';
 import Dashboard from './pages/admin/Dashboard';
+import CommentList from './pages/admin/CommentList';
 
 
 
@@ -33,6 +34,7 @@ function App() {
       <Route path='Sidebar' element={<Sidebar/>}/>
       <Route path='VoucherTable' element={<VoucherTable/>}/>
       <Route path='Dashboard' element={<Dashboard/>}/>
+      <Route path='CommentList' element={<CommentList/>}/>
     </Route>
   </Routes>
   </>;

@@ -53,7 +53,7 @@ const Sidebar = () => {
     </NavLink>
   </li>
   <li>
-    <NavLink to="/comments" className="menu-link">
+    <NavLink to="/CommentList" className="menu-link">
       <FaComments className="icon" />
       <span className="text">Quản lý bình luận</span>
     </NavLink>

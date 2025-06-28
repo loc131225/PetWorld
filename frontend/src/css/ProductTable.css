@@ -1,5 +1,6 @@
 .product-table-container {
   padding: 20px;
+  padding-top: 70px;
   margin-left: 250px; /* nếu có sidebar */
 }
 
