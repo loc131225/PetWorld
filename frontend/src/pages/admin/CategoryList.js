@@ -1,28 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaBars, FaSearch, FaBell, FaEnvelope, FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import "./../../css/CategoryList.css";
 import Sidebar from '../admin/Sidebar';
 import avatarImg from '../../assets/myden.jpg';
 
-const initialData = [
-  { id: 1, name: "Sản Phẩm Cho Chó", img: "/images/dog1.png", date: "31/05/2005", quantity: 20 },
-  { id: 2, name: "Sản Phẩm Cho Mèo", img: "/images/cat1.png", date: "31/05/2005", quantity: 10 },
-  { id: 3, name: "Sản Phẩm Mới", img: "/images/new1.png", date: "31/05/2005", quantity: 5 },
-  { id: 4, name: "Sản Phẩm Bán Chạy", img: "/images/hot1.png", date: "31/05/2005", quantity: 10 },
-  { id: 5, name: "Deal Giá Sốc", img: "/images/sale1.png", date: "31/05/2005", quantity: 1 },
-];
-
 function CategoryList() {
+  const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredData = initialData.filter(item =>
+  useEffect(() => {
+    // Gọi API khi component được mount
+    axios.get("http://localhost:8000/api/categories")
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((err) => {
+        console.error("Lỗi khi gọi API:", err);
+      });
+  }, []);
+
+  const filteredData = categories.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.id.toString().includes(searchTerm)
   );
 
   const handleAddCategory = () => {
     alert("Bạn muốn thêm danh mục mới? (chưa xử lý chức năng)");
-    // Hoặc điều hướng: navigate("/admin/add-category");
   };
 
   return (

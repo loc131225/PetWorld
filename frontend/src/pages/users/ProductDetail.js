@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getProductById } from '../../api/productApi';
+import { getProductBySlug } from '../../api/productApi'; // ✅ sửa tên hàm
 import '../../css/ProductDetail.css';
 
 const ProductDetail = () => {
-    const { id } = useParams(); // lấy ID từ URL
+    const { slug } = useParams(); // ✅ lấy slug từ URL
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
-        getProductById(id)
+        getProductBySlug(slug)
             .then(data => setProduct(data))
             .catch(err => console.error(err));
-    }, [id]);
+    }, [slug]);
 
     const handleQuantityChange = (type) => {
         if (type === 'increase') {

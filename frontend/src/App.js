@@ -37,9 +37,6 @@ function App() {
       <Route path='Dashboard' element={<Dashboard/>}/>
       <Route path='CommentList' element={<CommentList/>}/>
       <Route path='OrderList' element={<OrderList/>}/>
-
-      <Route path="/product/:id" element={<ProductDetail />} />
-
     </Route>
   </Routes>
   </>;
