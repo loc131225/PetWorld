@@ -43,6 +43,7 @@ const VoucherTable = () => {
         </div>
 
         {/* TIÊU ĐỀ VÀ TÌM KIẾM */}
+        <h2 className="voucher-title">Quản lý voucher</h2>
         <div className="voucher-controls">
           <select className="voucher-filter">
             <option>Lọc voucher</option>

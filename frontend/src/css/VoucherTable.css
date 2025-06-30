@@ -142,3 +142,10 @@
   height: 30px;
   object-fit: cover;
 }
+.voucher-title {
+  padding-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
