@@ -110,6 +110,7 @@ const UserList = () => {
 
         {/* --- PHẦN QUẢN LÝ NGƯỜI DÙNG --- */}
         <div className="user-management" style={{ padding: '50px' }}>
+          <h2 className="user-title">Quản lý tài khoản</h2>
           <div className="user-filter">
             <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
               <option value="all">Lọc người dùng </option>

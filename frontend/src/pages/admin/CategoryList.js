@@ -1,55 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaBars, FaSearch, FaBell, FaEnvelope, FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import "./../../css/CategoryList.css";
 import Sidebar from '../admin/Sidebar';
-
 import avatarImg from '../../assets/myden.jpg';
 
-const data = [
-  {
-    id: 1,
-    name: "Sản Phẩm Cho Chó",
-    img: "/images/dog1.png",
-    date: "31/05/2005",
-    quantity: 20,
-  },
-  {
-    id: 2,
-    name: "Sản Phẩm Cho Mèo",
-    img: "/images/cat1.png",
-    date: "31/05/2005",
-    quantity: 10,
-  },
-  {
-    id: 3,
-    name: "Sản Phẩm Mới",
-    img: "/images/new1.png",
-    date: "31/05/2005",
-    quantity: 5,
-  },
-  {
-    id: 4,
-    name: "Sản Phẩm Bán Chạy",
-    img: "/images/hot1.png",
-    date: "31/05/2005",
-    quantity: 10,
-  },
-  {
-    id: 5,
-    name: "Deal Giá Sốc",
-    img: "/images/sale1.png",
-    date: "31/05/2005",
-    quantity: 1,
-  },
+const initialData = [
+  { id: 1, name: "Sản Phẩm Cho Chó", img: "/images/dog1.png", date: "31/05/2005", quantity: 20 },
+  { id: 2, name: "Sản Phẩm Cho Mèo", img: "/images/cat1.png", date: "31/05/2005", quantity: 10 },
+  { id: 3, name: "Sản Phẩm Mới", img: "/images/new1.png", date: "31/05/2005", quantity: 5 },
+  { id: 4, name: "Sản Phẩm Bán Chạy", img: "/images/hot1.png", date: "31/05/2005", quantity: 10 },
+  { id: 5, name: "Deal Giá Sốc", img: "/images/sale1.png", date: "31/05/2005", quantity: 1 },
 ];
 
 function CategoryList() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredData = initialData.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.id.toString().includes(searchTerm)
+  );
+
+  const handleAddCategory = () => {
+    alert("Bạn muốn thêm danh mục mới? (chưa xử lý chức năng)");
+    // Hoặc điều hướng: navigate("/admin/add-category");
+  };
+
   return (
     <div className="layout">
-      <Sidebar /> 
+      <Sidebar />
 
       <div className="category-container">
-        {/* Header thêm vào */}
+        {/* Header */}
         <div className="global-header">
           <FaBars className="global-icon" />
           <FaSearch className="global-icon" />
@@ -64,8 +45,13 @@ function CategoryList() {
 
         <h2>Quản lý danh mục: Danh sách danh mục</h2>
         <div className="category-toolbar">
-          <input type="text" placeholder="Tìm kiếm theo mã danh mục, tên danh mục" />
-          <button className="add-btn">+ Thêm danh mục</button>
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo mã danh mục, tên danh mục"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button className="add-btn" onClick={handleAddCategory}>+ Thêm danh mục</button>
         </div>
 
         <table className="category-table">
@@ -81,7 +67,7 @@ function CategoryList() {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
+            {filteredData.map((item, index) => (
               <tr key={item.id}>
                 <td>{index + 1}</td>
                 <td><img src={item.img} alt={item.name} className="category-img" /></td>

@@ -15,6 +15,7 @@ import Sidebar from './pages/admin/Sidebar';
 import VoucherTable from './pages/admin/VoucherTable';
 import Dashboard from './pages/admin/Dashboard';
 import CommentList from './pages/admin/CommentList';
+import OrderList from './pages/admin/OrderList';
 
 
 
@@ -35,6 +36,7 @@ function App() {
       <Route path='VoucherTable' element={<VoucherTable/>}/>
       <Route path='Dashboard' element={<Dashboard/>}/>
       <Route path='CommentList' element={<CommentList/>}/>
+      <Route path='OrderList' element={<OrderList/>}/>
     </Route>
   </Routes>
   </>;

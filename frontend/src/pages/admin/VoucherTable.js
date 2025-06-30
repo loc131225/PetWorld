@@ -1,29 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../admin/Sidebar';
 import avatarImg from '../../assets/myden.jpg';
 import { FaSearch, FaBell, FaEnvelope, FaBars, FaEdit, FaTrash } from 'react-icons/fa';
 import '../../css/VoucherTable.css';
 
-const vouchers = [
+const initialVouchers = [
   {
-    name: 'Mùa Hè Cùng Chiếu Boss', code: 'SUMMERBOSS10', discount: 'Giảm 10% trên tổng đơn hàng',
+    name: 'Mùa Hè Cùng Chíu Boss', code: 'SUMMERBOSS10', discount: 'Giảm 10% trên tổng đơn hàng',
     condition: 'Đơn từ 200K, chỉ áp dụng cho mèo.', start: '10/06/2025', end: '24/06/2025'
   },
   {
-    name: 'Mùa Hè Cùng Chiếu Boss', code: 'SUMMERBOSS10', discount: 'Giảm 10% trên tổng đơn hàng',
+    name: 'Mùa Hè Cùng Chiếu Boss', code: 'SUMMERBOSS11', discount: 'Giảm 10% trên tổng đơn hàng',
     condition: 'Đơn từ 200K, chỉ áp dụng cho mèo.', start: '10/06/2025', end: '24/06/2025'
   },
   {
-    name: 'Mùa Hè Cùng Chiếu Boss', code: 'SUMMERBOSS10', discount: 'Giảm 10% trên tổng đơn hàng',
+    name: 'Mùa Hè Cùng Chiếu Boss', code: 'SUMMERBOSS12', discount: 'Giảm 10% trên tổng đơn hàng',
     condition: 'Đơn từ 200K, chỉ áp dụng cho mèo.', start: '10/06/2025', end: '24/06/2025'
   },
 ];
 
 const VoucherTable = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredVouchers = initialVouchers.filter(voucher =>
+    voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    voucher.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="layout">
       <Sidebar />
       <div className="main-content">
+        {/* HEADER */}
         <div className="voucher-header">
           <FaBars className="icon" />
           <FaSearch className="icon" />
@@ -34,13 +42,21 @@ const VoucherTable = () => {
           <img src={avatarImg} alt="avatar" className="global-avatar" />
         </div>
 
+        {/* TIÊU ĐỀ VÀ TÌM KIẾM */}
         <div className="voucher-controls">
           <select className="voucher-filter">
             <option>Lọc voucher</option>
           </select>
-          <input type="text" placeholder="Tìm kiếm voucher" className="voucher-search" />
+          <input
+            type="text"
+            placeholder="Tìm kiếm voucher"
+            className="voucher-search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
+        {/* BẢNG VOUCHER */}
         <table className="voucher-table">
           <thead>
             <tr>
@@ -54,7 +70,7 @@ const VoucherTable = () => {
             </tr>
           </thead>
           <tbody>
-            {vouchers.map((v, i) => (
+            {filteredVouchers.map((v, i) => (
               <tr key={i}>
                 <td>{v.name}</td>
                 <td><b>{v.code}</b></td>

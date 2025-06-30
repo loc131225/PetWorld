@@ -9,7 +9,8 @@ import {
   FaDog,
   FaShoppingCart,
   FaEnvelope,
-  FaChartBar
+  FaChartBar,
+  FaBox
 } from 'react-icons/fa';
 import logo from '../../assets/logoPetWord.png';
 import '../../css/Sidebar.css';
@@ -47,6 +48,12 @@ const Sidebar = () => {
     </NavLink>
   </li>
   <li>
+    <NavLink to="/OrderList" className="menu-link">
+      <FaBox className="icon" />
+      <span className="text">Quản lý đơn hàng</span>
+    </NavLink>
+  </li>
+  <li>
     <NavLink to="/VoucherTable" className="menu-link">
       <FaGift className="icon" />
       <span className="text">Quản lý voucher</span>
@@ -61,25 +68,13 @@ const Sidebar = () => {
   <li>
     <NavLink to="/posts" className="menu-link">
       <FaPen className="icon" />
-      <span className="text">Quản lý bài viết</span>
+      <span className="text">Quản lý danh mục bv</span>
     </NavLink>
   </li>
   <li>
     <NavLink to="/pets" className="menu-link">
-      <FaDog className="icon" />
-      <span className="text">Quản lý thú cưng</span>
-    </NavLink>
-  </li>
-  <li>
-    <NavLink to="/orders" className="menu-link">
-      <FaShoppingCart className="icon" />
-      <span className="text">Quản lý đơn hàng</span>
-    </NavLink>
-  </li>
-  <li>
-    <NavLink to="/contacts" className="menu-link">
-      <FaEnvelope className="icon" />
-      <span className="text">Quản lý liên hệ</span>
+      <FaPen className="icon" />
+      <span className="text">Quản lý bài viết</span>
     </NavLink>
   </li>
 </ul>
