@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Bánh quy Applod",
+      "price": 199000,
+      "old_price": 246000,
+      "image_url": "/images/product-main.png",
+      "category_name": "Thức ăn cho chó",
+      "description": "Bánh ngon cho chó, vị phô mai và việt quất."
+    },
+    {
+      "id": 2,
+      "name": "Thức ăn mèo Whiskas",
+      "price": 150000,
+      "old_price": 200000,
+      "image_url": "/images/product-whiskas.png",
+      "category_name": "Thức ăn cho mèo",
+      "description": "Thức ăn dinh dưỡng cho mèo từ cá hồi."
+    }
+  ]
+}
