@@ -79,3 +79,14 @@ Route::prefix('admin/users')->group(function () {
     Route::post('/{id}/toggle-role', [AdminUserController::class, 'toggleRole']);
 });
 
+Route::prefix('admin/orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::get('/{id}', [OrderController::class, 'show']);
+    Route::post('/{id}/update-status', [OrderController::class, 'updateStatus']);
+    Route::post('/{id}/update-payment', [OrderController::class, 'updatePayment']);
+});
+
+Route::prefix('admin/ratings')->name('admin.')->group(function() {
+    Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
+    Route::delete('/ratings/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
+});
