@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\Admin\OrderController;
+use App\Http\Controllers\Api\Admin\RatingController;
 
 
 Route::get('/categoriesTree', [CategoryController::class, 'index']);
