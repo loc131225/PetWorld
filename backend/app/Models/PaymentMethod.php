@@ -6,7 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentMethod extends Model
 {
-    protected $table = 'payment_methods'; // CHỈ ĐỊNH RÕ TÊN BẢNG nếu không đúng chuẩn Laravel
+    protected $table = 'payment_methods';
 
+    protected $fillable = [
+        'name',
+        'status'
+    ];
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'payment_id');
+    }
 }
