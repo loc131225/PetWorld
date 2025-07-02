@@ -28,12 +28,14 @@ class ContactController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'message' => $request->message,
+            'status' => '0'
         ]);
 
         // Gửi mail
         $data = (object)[
             'name' => $request->name,
             'email' => $request->email,
+            'message' => $request->message,
         ];
 
         Mail::to($request->email)->send(new ContactReplyMail($data));
