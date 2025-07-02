@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ContactController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
