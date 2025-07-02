@@ -10,6 +10,28 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function searchProductsBySlug($query)
+    {
+    // Tìm các sản phẩm có slug chứa chuỗi query (không phân biệt chữ hoa/thường)
+    $products = Product::where('slug', 'like', '%' . $query . '%')->get();
+
+    // Chuẩn bị phản hồi
+    if ($products->isNotEmpty()) {
+        $response = [
+            'status' => true,
+            'message' => 'Danh sách sản phẩm được tìm thấy',
+            'data' => $products
+        ];
+    } else {
+        $response = [
+            'status' => false,
+            'message' => 'Không tìm thấy sản phẩm nào với slug chứa "' . $query . '"',
+            'data' => []
+        ];
+    }
+
+    return response()->json($response);
+}
     //1. Sản phẩm thuộc danh mục chó
     public function dogProducts(){
         $categoryId = Category::where('name', 'like', 'Dành cho chó')->value('id');
