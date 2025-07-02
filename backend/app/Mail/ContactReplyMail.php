@@ -25,6 +25,8 @@ class ContactReplyMail extends Mailable
                     <body>
                         <h2>Xin chào ' . e($this->contact->name) . ',</h2>
                         <p>Cảm ơn bạn đã liên hệ với chúng tôi.</p>
+                        <p>Thông tin bạn đã gửi:</p>
+                        <p><strong>Nội dung:</strong> ' . nl2br(e($this->contact->message ?? '')) . '</p>
                         <p>Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
                         <p>Trân trọng,<br>Đội ngũ Pet World</p>
                     </body>
