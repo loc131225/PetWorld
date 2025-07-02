@@ -80,7 +80,7 @@ class ProductController extends Controller
             ->with([
                 'attributes.attributeValues',
                 'ratings.user',
-                'categories.products'
+                'categories'
             ])->first();
 
         if(!$product){
@@ -90,43 +90,26 @@ class ProductController extends Controller
             ], 404);
         }
 
-        // Lấy danh sách sản phẩm cùng danh mục
-        $relatedProducts = Product::whereHas('categories', function ($query) use ($product){
-            return $query->whereIn('categories.id', $product->categories->pluck('id'));
-        })
-            ->where('id', '!=', $product->id) // Loại trừ sản phẩm hiện tại
-            ->latest()
-            ->take(4)
-            ->get();
+        // Lấy danh sách ID danh mục mà sản phẩm thuộc về
+    $categoryIds = $product->categories->pluck('id');
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Chi tiết sản phẩm',
-            'data' => [
-                'product' => $product,
-                'related_products' => $relatedProducts
-            ]
-        ]);
-    }
-//tìm kiếm
-     public function search(Request $request)
-{
-    $query = $request->input('q');
+    // Lấy danh sách product_id khác với sản phẩm hiện tại, trong cùng danh mục (không trùng)
+    $relatedProductIds = Product_category::whereIn('category_id', $categoryIds)
+        ->where('product_id', '!=', $product->id)
+        ->distinct()
+        ->limit(4)
+        ->pluck('product_id');
 
-    if (!$query) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Vui lòng nhập từ khóa tìm kiếm'
-        ], 400);
-    }
-
-    $products = Product::where('name', 'LIKE', '%' . $query . '%')
-        ->orWhere('description', 'LIKE', '%' . $query . '%')
-        ->get();
+    // Truy vấn sản phẩm theo ID
+    $relatedProducts = Product::whereIn('id', $relatedProductIds)->get();
 
     return response()->json([
-        'status' => 'success',
-        'products' => $products,
+        'status' => true,
+        'message' => 'Chi tiết sản phẩm',
+        'data' => [
+            'product' => $product,
+            'related_products' => $relatedProducts
+        ]
     ]);
-}
+    }
 }
