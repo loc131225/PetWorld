@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FaBars, FaSearch, FaBell, FaEnvelope, FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import "./../../css/CategoryList.css";
 import Sidebar from '../admin/Sidebar';
 import avatarImg from '../../assets/myden.jpg';
+import { getAllCategories } from '../../api/categoriesApi'; 
+import { format } from "date-fns";
 
 function CategoryList() {
+  const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Gọi API khi component được mount
-    axios.get("http://localhost:8000/api/categories")
-      .then((res) => {
-        setCategories(res.data);
-      })
-      .catch((err) => {
-        console.error("Lỗi khi gọi API:", err);
-      });
-  }, []);
-
-  const filteredData = categories.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.id.toString().includes(searchTerm)
-  );
+      getAllCategories()
+        .then(data => {
+          setCategories(data.data)
+          setLoading(false);
+        })
+        .catch(err => console.error(err));
+    }, []);
 
   const handleAddCategory = () => {
     alert("Bạn muốn thêm danh mục mới? (chưa xử lý chức năng)");
@@ -71,13 +66,24 @@ function CategoryList() {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((item, index) => (
+            {loading && (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              )}
+            {categories.map((item, index) => (
               <tr key={item.id}>
                 <td>{index + 1}</td>
-                <td><img src={item.img} alt={item.name} className="category-img" /></td>
+                <td><img src={item.image} alt={item.name} className="category-img" /></td>
                 <td><a href="#">{item.name}</a></td>
-                <td>{item.date}</td>
-                <td>{item.quantity}</td>
+                <td>
+                  {item.created_at
+                    ? format(new Date(item.created_at), "dd/MM/yyyy") // Format ngày
+                    : ""}
+                </td>
+                <td>{item.products_count}</td>
                 <td><FaEye className="icon" /></td>
                 <td className="actions">
                   <FaEdit className="icon" title="Sửa" />

@@ -1,69 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../admin/Sidebar';
 import avatarImg from '../../assets/myden.jpg';
 import { FaEye, FaEyeSlash, FaEdit, FaTrashAlt, FaBars, FaSearch, FaBell, FaEnvelope } from 'react-icons/fa';
 import '../../css/ProductTable.css';
+import { getAllProducts } from '../../api/productApi'; 
+import { formatVND } from '../../utils/formatPrice'; // Assuming you have a utility function to format prices
+import { format } from "date-fns";
 
 const ProductTable = () => {
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const products = [
-    {
-      id: 1,
-      image: '/images/product1.jpg',
-      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
-      price: 289000,
-      discountPrice: 289000,
-      quantity: 30,
-      date: '31/05/2005',
-      status: true,
-    },
-    {
-      id: 2,
-      image: '/images/product2.jpg',
-      name: 'Khăn ướt vệ sinh Đa Năng',
-      price: 289000,
-      discountPrice: 289000,
-      quantity: 30,
-      date: '31/05/2005',
-      status: false,
-    },
-    {
-      id: 3,
-      image: '/images/product1.jpg',
-      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
-      price: 289000,
-      discountPrice: 289000,
-      quantity: 30,
-      date: '31/05/2005',
-      status: true,
-    },
-    {
-      id: 4,
-      image: '/images/product1.jpg',
-      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
-      price: 289000,
-      discountPrice: 289000,
-      quantity: 30,
-      date: '31/05/2005',
-      status: true,
-    },
-    {
-      id: 5,
-      image: '/images/product1.jpg',
-      name: 'Xịt vệ sinh Răng Miệng Chó Mèo',
-      price: 289000,
-      discountPrice: 289000,
-      quantity: 30,
-      date: '31/05/2005',
-      status: true,
-    },
-  ];
+  useEffect(() => {
+        getAllProducts()
+          .then(data => {
+            setProducts(data.data)
+            setLoading(false);
+          })
+          .catch(err => console.error(err));
+      }, []);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+      console.log(products)
   return (
     <div className="admin-page">
       <Sidebar />
@@ -114,15 +72,26 @@ const ProductTable = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product, index) => (
+              {loading && (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              )}
+              {products.map((product, index) => (
                 <tr key={product.id}>
                   <td>{index + 1}</td>
                   <td><img src={product.image} alt={product.name} className="product-image" /></td>
                   <td className="product-name">{product.name}</td>
-                  <td>{product.price.toLocaleString()} đ</td>
-                  <td>{product.discountPrice.toLocaleString()} đ</td>
-                  <td>{product.quantity}</td>
-                  <td>{product.date}</td>
+                  <td>{formatVND(Number(product.price))}</td>
+                  <td>{formatVND(Number(product.sale_price))}</td>
+                  <td>{product.stock_quantity}</td>
+                  <td>
+                                    {product.created_at
+                                      ? format(new Date(product.created_at), "dd/MM/yyyy") // Format ngày
+                                      : ""}
+                                  </td>
                   <td>
                     {product.status ? (
                       <FaEye title="Đang hiển thị" className="action-icon" />

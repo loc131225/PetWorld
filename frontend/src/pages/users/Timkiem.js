@@ -1,67 +1,24 @@
-import React, { useState } from 'react';
-// import { searchProducts } from '../../api/productApi';
-import '../../css/TimKiem.css'; // Import CSS riêng cho trang tìm kiếm
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { getProductsBySearch } from '../../api/productApi';
+import '../../css/TimKiem.css'; 
 
 const TimKiem = () => {
+    const [loading, setLoading] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const searchQuery = searchParams.get('search');
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+            getProductsBySearch(searchQuery)
+                .then(data => {
+                    setProducts(data.data)
+                    setLoading(false);
+                }) 
+                .catch(err => console.error(err));
+        }, [searchQuery]);
     // Dữ liệu sản phẩm mẫu (thay thế bằng dữ liệu từ API thực tế)
-    const [products, setProducts] = useState([
-        {
-            id: 1,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png" // Đảm bảo đường dẫn này đúng
-        },
-        {
-            id: 2,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 3,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 4,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 5,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 6,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 7,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-        {
-            id: 8,
-            name: "Thức ăn cho mèo, Hạt cá Hồi",
-            oldPrice: "200.000Đ",
-            currentPrice: "150.000Đ",
-            image: "/images/product-whiskas.png"
-        },
-    ]);
+    
 
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = 16; // Số lượng trang tổng cộng, có thể lấy từ API
@@ -84,8 +41,12 @@ const TimKiem = () => {
             </div>
 
             <div className="product-grid-search-page">
+                {loading && <div className="loading-message">Đang tải sản phẩm...</div>}
+                {!loading && products.length === 0 && (
+                    <div className="no-results-message">Không có sản phẩm nào phù hợp với tìm kiếm của bạn.</div>
+                )}
                 {products.map(product => (
-                    <div key={product.id} className="product-card-search-page">
+                    <Link to={`/ProductDetail/${product.slug}`} key={product.id} className="product-card-search-page">
                         <div className="discount-tag-search-page">
                             <p>Giảm 10% cho đơn hàng từ 500k</p>
                             <p>Sử dụng voucher: PetWorld2</p>
@@ -93,8 +54,8 @@ const TimKiem = () => {
                         <img src={product.image} alt={product.name} className="product-image-search-page" />
                         <h3 className="product-name-search-page">{product.name}</h3>
                         <div className="product-prices-search-page">
-                            <span className="old-price-search-page">{product.oldPrice}</span>
-                            <span className="current-price-search-page">{product.currentPrice}</span>
+                            <span className="old-price-search-page">{product.price}</span>
+                            <span className="current-price-search-page">{product.sale_price}</span>
                         </div>
                         <div className="product-actions-search-page">
                             <button className="add-to-cart-button-search-page">Thêm vào giỏ</button>
@@ -104,7 +65,7 @@ const TimKiem = () => {
                                 </svg>
                             </button>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 

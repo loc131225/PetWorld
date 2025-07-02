@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductBySlug } from '../../api/productApi'; // ✅ sửa tên hàm
 import '../../css/ProductDetail.css';
+import { formatVND } from '../../utils/formatPrice'; // ✅ nếu bạn có hàm định dạng tiền tệ
 
 const ProductDetail = () => {
     const { slug } = useParams(); // ✅ lấy slug từ URL
@@ -10,7 +11,7 @@ const ProductDetail = () => {
 
     useEffect(() => {
         getProductBySlug(slug)
-            .then(data => setProduct(data))
+            .then(data => setProduct(data.data.product))
             .catch(err => console.error(err));
     }, [slug]);
 
@@ -43,8 +44,8 @@ const ProductDetail = () => {
                     </div>
 
                     <div className="product-price">
-                        <span className="old-price">{product.old_price?.toLocaleString()}Đ</span>
-                        <span className="current-price">{product.price?.toLocaleString()} Đ</span>
+                        <span className="old-price">{formatVND(Number(product.price))}</span>
+                        <span className="current-price">{formatVND(Number(product.sale_price))}</span>
                     </div>
 
                     <div className="product-size">
@@ -85,7 +86,7 @@ const ProductDetail = () => {
             <div className="product-description-reviews-container">
                 <div className="product-description-section">
                     <h2>Mô tả sản phẩm</h2>
-                    <p>{product.description || "Hiện chưa có mô tả chi tiết."}</p>
+                    <div dangerouslySetInnerHTML={{ __html: product.description }}></div>
                 </div>
 
                 <div className="customer-reviews-section">

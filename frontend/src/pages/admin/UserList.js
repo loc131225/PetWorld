@@ -1,97 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import avatarImg from '../../assets/myden.jpg';
 import { FaBars, FaSearch, FaBell, FaEnvelope } from 'react-icons/fa';
 import Sidebar from './Sidebar';
 import '../../css/UserList.css';
+import { getAllUser } from '../../api/userApi'; 
 
 
 const UserList = () => {
+  const [loading, setLoading] = useState(true);
+  const [users, setProduct] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-
-  const users = [
-    {
-      id: '#0001',
-      phone: '0987654321',
-      name: 'Nguyễn Thanh Mính Lộc',
-      email: 'user123@gmail.com',
-      accountType: 'Quản trị viên',
-      status: 'active',
-    },
-    {
-      id: '#0002',
-      phone: '0912345678',
-      name: 'Nguyễn Trung Kiên',
-      email: 'user123@gmail.com',
-      accountType: 'Quản trị viên',
-      status: 'active',
-    },
-    {
-      id: '#0003',
-      phone: '0909123456',
-      name: 'Võ Trung Hậu',
-      email: 'user123@gmail.com',
-      accountType: 'Quản trị viên',
-      status: 'active',
-    },
-    {
-      id: '#0004',
-      phone: '0977456789',
-      name: 'Đặng Trần Khánh Đăng',
-      email: 'user123@gmail.com',
-      accountType: 'Quản trị viên',
-      status: 'active',
-    },
-    {
-      id: '#0005',
-      phone: '0968123456',
-      name: 'Nguyễn Hưng',
-      email: 'user123@gmail.com',
-      accountType: 'Quản trị viên',
-      status: 'active',
-    },
-    {
-      id: '#0006',
-      phone: '0938123456',
-      name: 'G-Dragon',
-      email: 'user123@gmail.com',
-      accountType: 'Khách hàng',
-      status: 'inactive',
-    },
-    {
-      id: '#0007',
-      phone: '0888123456',
-      name: 'Trịnh Trần Phương Tuấn',
-      email: 'user123@gmail.com',
-      accountType: 'Khách hàng',
-      status: 'active',
-    },
-    {
-      id: '#0008',
-      phone: '0899123456',
-      name: 'Binz',
-      email: 'user123@gmail.com',
-      accountType: 'Khách hàng',
-      status: 'inactive',
-    },
-    {
-      id: '#0009',
-      phone: '0941234567',
-      name: 'Hẹ Hẹ Hẹ',
-      email: 'user123@gmail.com',
-      accountType: 'Khách hàng',
-      status: 'inactive',
-    },
-  ];
-
-  const filteredUsers = users.filter(user => {
-    const matchSearch =
-      user.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchType = filterType === 'all' || user.accountType === filterType;
-    return matchSearch && matchType;
-  });
+  useEffect(() => {
+    getAllUser()
+      .then(data => {
+        setProduct(data.data)
+        setLoading(false);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   return (
     <div style={{ display: 'flex' }}>
@@ -105,7 +32,6 @@ const UserList = () => {
           <FaBell className="global-icon red" />
           <FaEnvelope className="global-icon red" />
           <div className="global-user">Nguyễn Trung Kiên</div>
-          <img src={avatarImg} alt="avatar" className="global-avatar" />
         </div>
 
         {/* --- PHẦN QUẢN LÝ NGƯỜI DÙNG --- */}
@@ -137,28 +63,35 @@ const UserList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((user) => (
+              {loading && (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              )}
+              {users.map((user) => (
                 <tr key={user.id}>
                   <td>{user.id}</td>
-                  <td>{user.phone}</td>
+                  <td>{user.phone || "Trống"}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>
                     <span
                       className={
-                        user.accountType === 'Quản trị viên'
+                        user.role_id !== null
                           ? 'badge admin'
                           : 'badge customer'
                       }
                     >
-                      {user.accountType}
+                      {user.role_id !== null ? 'Quản trị viên' : 'Khách hàng'}
                     </span>
                   </td>
                   <td>
                     <button
-                      className={user.status === 'active' ? 'btn active' : 'btn inactive'}
+                      className={user.status === 1 ? 'btn active' : 'btn inactive'}
                     >
-                      {user.status === 'active' ? 'Kích hoạt' : 'Vô hiệu hoá'}
+                      {user.status === 1 ? 'Kích hoạt' : 'Vô hiệu hoá'}
                     </button>
                   </td>
                 </tr>
