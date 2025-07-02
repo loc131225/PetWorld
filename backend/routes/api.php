@@ -57,6 +57,10 @@ Route::middleware('auth:sanctum')->group(function(){
 // Thanh toán
 Route::middleware('auth:sanctum')->post('/checkout', [OrderController::class, 'checkout']);
 
+// Liên hệ
+Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.form');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+
 //Admin
 Route::prefix('admin/products')->group(function () {
     Route::get('/', [AdminProductController::class, 'index']);
