@@ -97,7 +97,7 @@ Route::prefix('admin/ratings')->name('admin.')->group(function() {
     Route::delete('/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 });
 
-Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function() {
+Route::prefix('admin')->nam('admin.')->group(function() {
     Route::get('/statistics', [StatisticsController::class, 'dashboard'])->name('admin.dashboard');
 });
 
