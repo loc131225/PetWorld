@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\RatingController;
+use App\Http\Controllers\Api\Admin\StatisticsController;
 
 
 Route::get('/categoriesTree', [CategoryController::class, 'index']);
@@ -92,6 +93,11 @@ Route::prefix('admin/orders')->group(function () {
 });
 
 Route::prefix('admin/ratings')->name('admin.')->group(function() {
-    Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
-    Route::delete('/ratings/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
+    Route::get('/', [RatingController::class, 'index'])->name('ratings.index');
+    Route::delete('/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 });
+
+Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function() {
+    Route::get('/statistics', [StatisticsController::class, 'dashboard'])->name('admin.dashboard');
+});
+
