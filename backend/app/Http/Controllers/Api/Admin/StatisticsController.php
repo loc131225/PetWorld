@@ -55,16 +55,16 @@ class StatisticsController extends Controller
             'units' => 'metric',
         ])->json();
 
-        return view('admin.dashboard', compact(
-            'totalRevenue',
-            'totalCompletedOrders',
-            'totalUsers',
-            'totalStockedProducts',
-            'monthlyRevenue',
-            'newUsers',
-            'recentOrders',
-            'categoryStats',
-            'weather'
-        ));
+        // return view('admin.dashboard', compact(
+        //     'totalRevenue',
+        //     'totalCompletedOrders',
+        //     'totalUsers',
+        //     'totalStockedProducts',
+        //     'monthlyRevenue',
+        //     'newUsers',
+        //     'recentOrders',
+        //     'categoryStats',
+        //     'weather'
+        // ));
     }
 }
