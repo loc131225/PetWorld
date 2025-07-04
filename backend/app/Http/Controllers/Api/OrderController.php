@@ -81,4 +81,47 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    public function myOrders(Request $request){
+        $userId = $request->user()->id;
+
+        $orders = Order::where('user_id', $userId)
+            ->with(['items.productAttribute.product'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Danh sách đơn hàng của bạn',
+            'data' => $orders
+        ]);
+    }
+
+    //Chi tiết đơn hàng
+    public function orderDetail(Request $request, $orderId){
+        $userId = $request->user()->id;
+
+        //Kiểm tra quyền truy cập
+        $order = Order::where('id', $orderId)
+            ->where('user_id', $userId)
+            ->with(['items.productAttribute.product'])
+            ->first();
+
+        if(!$order){
+            return response()->json([
+                'status' => false,
+                'message' => 'Đơn hàng không tồn tại hoặc bạn không có quyền truy cập',
+                'debug' => [
+                    'order_id' => $orderId,
+                    'user_id' => $userId,
+                ]
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Chi tiết đơn hàng',
+            'data' => $order
+        ]);
+    }
 }
