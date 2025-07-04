@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Admin\RatingController;
 use App\Http\Controllers\Api\Admin\StatisticsController;
-
+use App\Http\Controllers\Api\Admin\PostAdminController;
 
 Route::get('/categoriesTree', [CategoryController::class, 'index']);
 Route::get('/products/home-dogs', [ProductController::class, 'dogProducts']);
@@ -71,6 +71,14 @@ Route::prefix('admin/products')->group(function () {
     Route::get('/{id}', [AdminProductController::class, 'show']);
     Route::post('/{id}', [AdminProductController::class, 'update']);
     Route::delete('/{id}', [AdminProductController::class, 'destroy']);
+});
+// quản lí bài viết
+Route::prefix('admin/posts')/*->middleware(['auth:sanctum', 'is_admin'])*/->group(function () {
+    Route::get('/', [PostAdminController::class, 'index']);    
+    Route::post('/', [PostAdminController::class, 'store']);
+    Route::get('/{id}', [PostAdminController::class, 'show']);
+    Route::post('/{id}', [PostAdminController::class, 'update']);
+    Route::delete('/{id}', [PostAdminController::class, 'destroy']);
 });
 
 Route::prefix('admin/categories')->group(function () {
