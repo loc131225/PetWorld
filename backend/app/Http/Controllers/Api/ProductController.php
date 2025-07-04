@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Product_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -133,5 +134,27 @@ class ProductController extends Controller
             'related_products' => $relatedProducts
         ]
     ]);
+    }
+
+    //Sản phẩm theo danh mục
+    public function productsByCategory($slug){
+        $category = Category::where('slug', $slug)->first();
+
+        if(!$category){
+            return response()->json([
+                'status' => false,
+                'message' => 'Danh mục không tồn tại'
+            ], 404);
+        }
+
+        $products = Product::whereHas('categories', function ($query) use ($category){
+            $query->where('categories.id', $category->id);
+        })->latest()->paginate(12);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Danh mục sản phẩm theo danh mục',
+            'data' => $products
+        ]);
     }
 }
