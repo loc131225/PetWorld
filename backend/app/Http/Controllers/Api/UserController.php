@@ -66,4 +66,39 @@ class UserController extends Controller
         'data' => $user
     ]);
 }
+    
+public function changePassword(Request $request, $id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => 'User not found'
+        ], 404);
+    }
+
+    // Validate input
+    $request->validate([
+        'current_password' => 'required|string',
+        'new_password' => 'required|string|min:6|confirmed', // phải gửi thêm new_password_confirmation
+    ]);
+
+    // Kiểm tra mật khẩu hiện tại
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Mật khẩu hiện tại không đúng'
+        ], 400);
+    }
+
+    // Cập nhật mật khẩu mới
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Đổi mật khẩu thành công'
+    ]);
+}
 }
