@@ -33,6 +33,9 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::patch('/users/{id}', [UserController::class, 'update']);
 //đổi mật khẩu
 Route::post('/users/{id}/change-password', [UserController::class, 'changePassword']);
+//bài viết
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/{id}', [PostController::class, 'show']);
 
 //Chi tiết sản phẩm
 Route::get('/products/{slug}', [ProductController::class, 'show']);
