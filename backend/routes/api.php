@@ -64,53 +64,42 @@ Route::middleware('auth:sanctum')->group(function(){
 Route::middleware('auth:sanctum')->post('/checkout', [OrderController::class, 'checkout']);
 
 // Liên hệ
-Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.form');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
 //Admin
 Route::prefix('admin/products')->group(function () {
-    Route::get('/', [AdminProductController::class, 'index']);
     Route::post('/', [AdminProductController::class, 'store']);
-    Route::get('/{id}', [AdminProductController::class, 'show']);
     Route::post('/{id}', [AdminProductController::class, 'update']);
     Route::delete('/{id}', [AdminProductController::class, 'destroy']);
 });
 // quản lí bài viết
-Route::prefix('admin/posts')/*->middleware(['auth:sanctum', 'is_admin'])*/->group(function () {
-    Route::get('/', [PostAdminController::class, 'index']);    
+Route::prefix('admin/posts')->group(function () { 
     Route::post('/', [PostAdminController::class, 'store']);
-    Route::get('/{id}', [PostAdminController::class, 'show']);
     Route::post('/{id}', [PostAdminController::class, 'update']);
     Route::delete('/{id}', [PostAdminController::class, 'destroy']);
 });
 
 Route::prefix('admin/categories')->group(function () {
-    Route::get('/', [AdminCategoryController::class, 'index']);
     Route::post('/', [AdminCategoryController::class, 'store']);
-    Route::get('/{id}', [AdminCategoryController::class, 'show']);
     Route::post('/{id}', [AdminCategoryController::class, 'update']);
     Route::delete('/{id}', [AdminCategoryController::class, 'destroy']);
 });
 
 Route::prefix('admin/users')->group(function () {
-    Route::get('/', [AdminUserController::class, 'index']);
     Route::post('/{id}/toggle-status', [AdminUserController::class, 'toggleStatus']);
     Route::post('/{id}/toggle-role', [AdminUserController::class, 'toggleRole']);
 });
 
 Route::prefix('admin/orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index']);
-    Route::get('/{id}', [OrderController::class, 'show']);
     Route::post('/{id}/update-status', [OrderController::class, 'updateStatus']);
     Route::post('/{id}/update-payment', [OrderController::class, 'updatePayment']);
 });
 
 Route::prefix('admin/ratings')->name('admin.')->group(function() {
-    Route::get('/', [RatingController::class, 'index'])->name('ratings.index');
     Route::delete('/{id}', [RatingController::class, 'destroy'])->name('ratings.destroy');
 });
 
-Route::prefix('admin')->name('admin.')->group(function() {
-    Route::get('/statistics', [StatisticsController::class, 'dashboard'])->name('admin.dashboard');
-});
+// Route::prefix('admin')->name('admin.')->group(function() {
+//     Route::get('/statistics', [StatisticsController::class, 'dashboard'])->name('admin.dashboard');
+// });
 
