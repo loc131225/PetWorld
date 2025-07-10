@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    public function showForm()
-    {
-        return view('contact');
-    }
-
     public function submit(Request $request)
     {
         $request->validate([
