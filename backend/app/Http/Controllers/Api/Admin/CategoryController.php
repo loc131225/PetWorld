@@ -75,6 +75,7 @@ class CategoryController extends Controller
             'image'       => 'nullable|string|max:255',
             'parent_id'   => 'nullable|exists:categories,id|not_in:' . $id,
             'status'      => 'required|in:0,1',
+            'slug'        => 'required|string|max:255'              
         ]);
 
         $category->update([
@@ -83,6 +84,7 @@ class CategoryController extends Controller
             'image'       => $request->image,
             'parent_id'   => $request->parent_id,
             'status'      => $request->status,
+            'slug'        => $request->slug
         ]);
 
         return response()->json(['message' => 'Cập nhật danh mục thành công', 'data' => $category]);
