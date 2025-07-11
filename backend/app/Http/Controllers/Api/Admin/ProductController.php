@@ -49,18 +49,25 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'sale_price' => 'nullable|numeric',
             'stock_quantity' => 'required|integer',
-            'image' => 'nullable|string',
-            'second_image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'second_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'required|boolean',
             'category_ids' => 'array|nullable',
         ]);
-
+    
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-
+    
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+    
+        if ($request->hasFile('second_image')) {
+            $validated['second_image'] = $request->file('second_image')->store('products', 'public');
+        }
+    
         $product = Product::create($validated);
         $product->categories()->sync($request->category_ids ?? []);
-
-        // Thêm thuộc tính và giá trị nếu có
+    
         if ($request->has('attributes')) {
             foreach ($request->attributes as $attr) {
                 $productAttr = $product->productAttributes()->create();
@@ -73,7 +80,7 @@ class ProductController extends Controller
                 }
             }
         }
-
+    
         return response()->json(['message' => 'Thêm sản phẩm thành công', 'product' => $product], 201);
     }
 
@@ -88,7 +95,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-
+    
         $validated = $request->validate([
             'name' => 'sometimes|required|string',
             'slug' => 'nullable|string',
@@ -96,22 +103,35 @@ class ProductController extends Controller
             'price' => 'sometimes|required|numeric',
             'sale_price' => 'nullable|numeric',
             'stock_quantity' => 'sometimes|required|integer',
-            'image' => 'nullable|string',
-            'second_image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'second_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'sometimes|required|boolean',
             'category_ids' => 'array|nullable',
         ]);
-
+    
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                \Storage::disk('public')->delete($product->image);
+            }
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
+    
+        if ($request->hasFile('second_image')) {
+            if ($product->second_image) {
+                \Storage::disk('public')->delete($product->second_image);
+            }
+            $validated['second_image'] = $request->file('second_image')->store('products', 'public');
+        }
+    
         $product->update($validated);
         $product->categories()->sync($request->category_ids ?? []);
-
-        // Cập nhật thuộc tính và xoá cũ
+    
         if ($request->has('attributes')) {
             foreach ($product->productAttributes as $productAttribute) {
                 $productAttribute->attributeValues()->delete();
                 $productAttribute->delete();
             }
-
+    
             foreach ($request->attributes as $attr) {
                 $productAttr = $product->productAttributes()->create();
                 foreach ($attr['values'] as $value) {
@@ -123,7 +143,7 @@ class ProductController extends Controller
                 }
             }
         }
-
+    
         return response()->json(['message' => 'Cập nhật sản phẩm thành công']);
     }
 
