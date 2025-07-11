@@ -72,7 +72,7 @@ const Sidebar = () => {
     </NavLink>
   </li>
   <li>
-    <NavLink to="/admin/pets" className="menu-link">
+    <NavLink to="/admin/PostList" className="menu-link">
       <FaPen className="icon" />
       <span className="text">Quản lý bài viết</span>
     </NavLink>

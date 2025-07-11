@@ -18,6 +18,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import FavoriteProducts from "./pages/users/FavoriteProducts";
 import PostCategoryList from "./pages/admin/PostCategoryList";
+import PostList from "./pages/admin/PostList";
 
 
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="admin/CommentList" element={<CommentList />} />
         <Route path="admin/OrderList" element={<OrderList />} />
         <Route path="admin/PostCategoryList" element={<PostCategoryList />} />
+        <Route path="admin/PostList" element={<PostList />} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>
