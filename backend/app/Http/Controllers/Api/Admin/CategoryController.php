@@ -39,21 +39,27 @@ class CategoryController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|string|max:255',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'parent_id'   => 'nullable|exists:categories,id',
             'status'      => 'required|in:0,1',
             'slug'        => 'required|string|max:255'
         ]);
-
+    
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('categories', 'public');
+        } else {
+            $imagePath = null;
+        }
+    
         $category = Category::create([
             'name'        => $request->name,
             'description' => $request->description,
-            'image'       => $request->image,
+            'image'       => $imagePath,
             'parent_id'   => $request->parent_id,
             'status'      => $request->status,
             'slug'        => $request->slug
         ]);
-
+    
         return response()->json(['message' => 'Thêm danh mục thành công', 'data' => $category], 201);
     }
 
@@ -68,26 +74,44 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-
+    
         $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|string|max:255',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'parent_id'   => 'nullable|exists:categories,id|not_in:' . $id,
             'status'      => 'required|in:0,1',
-            'slug'        => 'required|string|max:255'              
+            'slug'        => 'required|string|max:255'
         ]);
-
+    
+        // Nếu có file ảnh mới
+        if ($request->hasFile('image')) {
+            // Xóa file cũ nếu tồn tại
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+    
+            // Lưu file mới
+            $imagePath = $request->file('image')->store('categories', 'public');
+        } else {
+            // Giữ nguyên ảnh cũ
+            $imagePath = $category->image;
+        }
+    
+        // Cập nhật dữ liệu
         $category->update([
             'name'        => $request->name,
             'description' => $request->description,
-            'image'       => $request->image,
+            'image'       => $imagePath,
             'parent_id'   => $request->parent_id,
             'status'      => $request->status,
             'slug'        => $request->slug
         ]);
-
-        return response()->json(['message' => 'Cập nhật danh mục thành công', 'data' => $category]);
+    
+        return response()->json([
+            'message' => 'Cập nhật danh mục thành công',
+            'data'    => $category
+        ]);
     }
 
     // Xóa danh mục (soft delete)
