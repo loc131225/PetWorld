@@ -16,6 +16,9 @@ import CommentList from "./pages/admin/CommentList";
 import OrderList from "./pages/admin/OrderList";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import FavoriteProducts from "./pages/users/FavoriteProducts";
+
+
 
 function App() {
   const location = useLocation();
@@ -34,11 +37,12 @@ function App() {
         <Route path="admin/CategoryList" element={<CategoryList />} />
         <Route path="admin/ProductTable" element={<ProductTable />} />
         <Route path="admin/UserList" element={<UserList />} />
-        <Route path="ProductDetail/:slug" element={<ProductDetail />} />
         <Route path="admin/VoucherTable" element={<VoucherTable />} />
         <Route path="admin/Dashboard" element={<Dashboard />} />
         <Route path="admin/CommentList" element={<CommentList />} />
         <Route path="admin/OrderList" element={<OrderList />} />
+        <Route path="ProductDetail/:slug" element={<ProductDetail />} />
+        <Route path="FavoriteProducts" element={<FavoriteProducts />} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>

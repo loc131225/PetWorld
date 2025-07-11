@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getProductBySlug } from '../../api/productApi'; // ✅ sửa tên hàm
+import { getProductBySlug } from '../../api/productApi';
 import '../../css/ProductDetail.css';
-import { formatVND } from '../../utils/formatPrice'; // ✅ nếu bạn có hàm định dạng tiền tệ
+import { formatVND } from '../../utils/formatPrice';
 
 const ProductDetail = () => {
-    const { slug } = useParams(); // ✅ lấy slug từ URL
+    const { slug } = useParams();
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
+
+    const imageBaseUrl = 'http://localhost:8000/storage/products/';
 
     useEffect(() => {
         getProductBySlug(slug)
@@ -29,12 +31,23 @@ const ProductDetail = () => {
         <div className="product-page-container">
             <div className="product-detail-header-container">
                 <div className="product-image-section">
-                    <img src={product.image_url} alt={product.name} className="main-product-image" />
+                    <img
+                        src={imageBaseUrl + product.image}
+                        alt={product.name}
+                        className="main-product-image"
+                    />
+                    {product.second_image && (
+                        <img
+                            src={imageBaseUrl + product.second_image}
+                            alt="Ảnh phụ"
+                            className="second-product-image"
+                        />
+                    )}
                 </div>
 
                 <div className="product-info-section">
                     <h1>{product.name}</h1>
-                    <p className="product-category">Danh mục: {product.category_name}</p>
+                    <p className="product-category">Danh mục: {product.category_name || 'Chưa cập nhật'}</p>
 
                     <div className="product-rating">
                         <span className="stars">★★★★★</span>
@@ -49,15 +62,16 @@ const ProductDetail = () => {
                     </div>
 
                     <div className="product-size">
-                        <p>Size: 420g</p>
+                        <p>Kích cỡ:</p>
                         <div className="size-options">
-                            <button className="size-button active">420g (350 + 70g)</button>
-                            <button className="size-button">845g (650 + 195g)</button>
+                            {product.attributes[0]?.attribute_values.map(attr => (
+                                <button key={attr.id} className="size-button">{attr.value}</button>
+                            ))}
                         </div>
                     </div>
 
                     <div className="product-quantity-section">
-                        <p>Còn hàng</p>
+                        <p>{product.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}</p>
                         <div className="quantity-control">
                             <button onClick={() => handleQuantityChange('decrease')}>-</button>
                             <span>{quantity}</span>
