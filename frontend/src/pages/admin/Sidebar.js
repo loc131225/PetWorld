@@ -66,7 +66,7 @@ const Sidebar = () => {
     </NavLink>
   </li>
   <li>
-    <NavLink to="/admin/posts" className="menu-link">
+    <NavLink to="/admin/PostCategoryList" className="menu-link">
       <FaPen className="icon" />
       <span className="text">Quản lý danh mục bv</span>
     </NavLink>

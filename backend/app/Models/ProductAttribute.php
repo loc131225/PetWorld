@@ -12,7 +12,8 @@ class ProductAttribute extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function attributeValues(){
-        return $this->hasMany(AttributeValue::class, 'product_attribute_id');
+    public function attributeValues()
+    {
+    return $this->hasMany(AttributeValue::class)->with('attribute');
     }
 }

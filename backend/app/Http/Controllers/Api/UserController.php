@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -66,7 +67,7 @@ class UserController extends Controller
         'data' => $user
     ]);
 }
-    
+
 public function changePassword(Request $request, $id)
 {
     $user = User::find($id);

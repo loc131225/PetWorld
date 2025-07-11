@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -35,6 +36,7 @@ class AuthController extends Controller
             'avatar' => $request->avatar ?? null,
             'address' => $request->address ?? null,
             'status' => $request->status ?? 1, // Mặc định là 1 (hoạt động)
+            'role_id' => 3, // Mặc định là người dùng (role_id = 3)
             'password' => Hash::make($request->password),
         ]);
 
@@ -44,7 +46,16 @@ class AuthController extends Controller
             'status' => true,
             'message'=> 'Đăng ký thành công',
             'token' => $token,
-            'user' => $user
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar,
+                'address' => $user->address,
+                'status' => $user->status,
+                'role_id' => $user->role_id
+            ]
         ]);
     }
 
@@ -60,13 +71,25 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        $roleName = DB::table('roles')->where('id', $user->role_id)->value('name');
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'token' => $token,
-            'user' => $user
+            'role_name' => $roleName,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'avatar' => $user->avatar,
+                'address' => $user->address,
+                'status' => $user->status,
+                'role_id' => $user->role_id
+            ]
         ]);
     }
 }

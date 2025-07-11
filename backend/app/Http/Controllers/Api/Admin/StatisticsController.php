@@ -64,7 +64,7 @@ class StatisticsController extends Controller
             'newUsers'              => $newUsers,
             'recentOrders'          => $recentOrders,
             'categoryStats'         => $categoryStats,
-            'weather'            => $weather, 
+            'weather'            => $weather,
         ]);
     }
 }

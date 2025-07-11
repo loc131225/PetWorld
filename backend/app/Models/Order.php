@@ -6,19 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = 'orders'; // Tên bảng
+    protected $table = 'orders';
 
     protected $fillable = [
         'user_id',
         'payment_id',
         'voucher_id',
         'status',
-        'phone',
         'shipping_address',
-        'note',
+        'phone',
+        'name',
         'total_amount',
+        'note',
         'payment_status',
-        'payment_date'
+        'payment_date',
     ];
 
     protected $casts = [
@@ -43,9 +44,8 @@ class Order extends Model
         return $this->belongsTo(PaymentMethod::class, 'payment_id');
     }
 
-    // Danh sách sản phẩm trong đơn
-    public function orderItems()
+    public function items()
     {
-        return $this->hasMany(OrderItem::class, 'order_id');
+        return $this->hasMany(OrderItem::class);
     }
 }

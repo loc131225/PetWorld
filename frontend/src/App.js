@@ -17,6 +17,7 @@ import OrderList from "./pages/admin/OrderList";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import FavoriteProducts from "./pages/users/FavoriteProducts";
+import PostCategoryList from "./pages/admin/PostCategoryList";
 
 
 
@@ -33,6 +34,9 @@ function App() {
         <Route path="home" element={<Home />} />
         <Route path="cart" element={<Cart />} />
         <Route path="Timkiem" element={<Timkiem />} />
+        <Route path="ProductDetail/:slug" element={<ProductDetail />} />
+        <Route path="FavoriteProducts" element={<FavoriteProducts />} />
+
         <Route path="/admin" element={<Dashboard />} />
         <Route path="admin/CategoryList" element={<CategoryList />} />
         <Route path="admin/ProductTable" element={<ProductTable />} />
@@ -41,8 +45,7 @@ function App() {
         <Route path="admin/Dashboard" element={<Dashboard />} />
         <Route path="admin/CommentList" element={<CommentList />} />
         <Route path="admin/OrderList" element={<OrderList />} />
-        <Route path="ProductDetail/:slug" element={<ProductDetail />} />
-        <Route path="FavoriteProducts" element={<FavoriteProducts />} />
+        <Route path="admin/PostCategoryList" element={<PostCategoryList />} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>

@@ -23,7 +23,7 @@ class Product extends Model
     }
 
     public function orderItems(){
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class, 'product_id', 'product_attribute_id');
     }
 
     public function ratings(){

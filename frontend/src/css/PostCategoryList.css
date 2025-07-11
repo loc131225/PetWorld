@@ -1,0 +1,70 @@
+.post-category-container {
+  padding: 30px;
+  padding-top: 80px;
+  margin-left: 250px;
+}
+
+.top-bar h2 {
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filters input,
+.filters select,
+.filters button {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.add-btn {
+  background-color: #1890ff;
+  color: #fff;
+  border: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: #1890ff;
+  color: white;
+}

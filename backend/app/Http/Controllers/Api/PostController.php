@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -7,7 +8,19 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    // Lấy danh sách tất cả bài viết (có user, category)
+    public function homeNews(){
+        $news = Post::where('status', 1)
+            ->orderByDesc('created_at')
+            ->limit(3)
+            ->get(['id', 'title', 'thumbnail' , 'content' , 'created_at']);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Danh sách tin tức mới nhất',
+            'data' => $news
+        ]);
+    }
+
     public function index()
     {
         $posts = Post::with(['user', 'category'])

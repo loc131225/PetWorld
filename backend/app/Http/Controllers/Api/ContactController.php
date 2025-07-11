@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
+
     public function submit(Request $request)
     {
         $request->validate([
@@ -38,5 +39,3 @@ class ContactController extends Controller
         return response()->json(['message' => 'Thông tin đã được lưu và email đã được gửi.']);
     }
 }
-
-

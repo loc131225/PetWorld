@@ -46,7 +46,26 @@ class ProductController extends Controller
 
         $products = Product::whereHas('categories', function ($query) use ($categoryId){
             $query->where('categories.id', $categoryId);
-        })->latest()->take(4)->get();
+        })->with(['attributes.attributeValues'])->latest()->take(4)->get();
+
+        // Gắn thêm thuộc tính dưới dạng flatten mảng để dễ xử lý bên frontend
+        $products->map(function ($product) {
+            $attributeOptions = [];
+
+            foreach ($product->attributes as $attr) {
+                foreach ($attr->attributeValues as $value) {
+                    $attributeOptions[] = [
+                        'id' => $value->id,
+                        'value' => $value->value,
+                        'attribute_name' => $value->attribute->name ?? '', // bạn có thể nối thêm tên thuộc tính nếu cần
+                    ];
+                }
+            }
+
+            $product->attribute_options = $attributeOptions;
+            unset($product->attributes); // không cần thiết nếu chỉ dùng attribute_options
+            return $product;
+        });
 
         return response()->json([
             'status' => true,
@@ -69,7 +88,26 @@ class ProductController extends Controller
 
         $products = Product::whereHas('categories', function ($query) use ($categoryId){
             $query->where('categories.id', $categoryId);
-        })->latest()->take(4)->get();
+        })->with(['attributes.attributeValues'])->latest()->take(4)->get();
+
+        // Gắn thêm thuộc tính dưới dạng flatten mảng để dễ xử lý bên frontend
+        $products->map(function ($product) {
+            $attributeOptions = [];
+
+            foreach ($product->attributes as $attr) {
+                foreach ($attr->attributeValues as $value) {
+                    $attributeOptions[] = [
+                        'id' => $value->id,
+                        'value' => $value->value,
+                        'attribute_name' => $value->attribute->name ?? '', // bạn có thể nối thêm tên thuộc tính nếu cần
+                    ];
+                }
+            }
+
+            $product->attribute_options = $attributeOptions;
+            unset($product->attributes); // không cần thiết nếu chỉ dùng attribute_options
+            return $product;
+        });
 
         return response()->json([
             'status' => true,
@@ -79,16 +117,39 @@ class ProductController extends Controller
     }
 
     //3. Sản phẩm bán chạy nhất
-    public function bestSellingProducts(){
-        $products = DB::table('products')
-            ->where('products.status', 1)
-            ->join('product_attributes', 'products.id', '=', 'product_attributes.product_id')
+    public function bestSellingProducts()
+    {
+        // Lấy ID các sản phẩm bán chạy nhất
+        $topProductIds = DB::table('product_attributes')
             ->join('order_items', 'product_attributes.id', '=', 'order_items.product_attribute_id')
-            ->select('products.id', 'products.name', 'products.slug', 'products.price', 'products.sale_price', 'products.image', DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('products.id', 'products.name', 'products.slug', 'products.price', 'products.sale_price', 'products.image')
+            ->select('product_attributes.product_id', DB::raw('SUM(order_items.quantity) as total_sold'))
+            ->groupBy('product_attributes.product_id')
             ->orderByDesc('total_sold')
             ->limit(4)
+            ->pluck('product_attributes.product_id');
+
+        // Truy vấn bằng Eloquent để load đầy đủ attributes và attributeValues
+        $products = Product::whereIn('id', $topProductIds)
+            ->with(['attributes.attributeValues.attribute'])
             ->get();
+
+        $products->map(function ($product) {
+            $attributeOptions = [];
+
+            foreach ($product->attributes as $attr) {
+                foreach ($attr->attributeValues as $value) {
+                    $attributeOptions[] = [
+                        'attribute_name' => $value->attribute->name ?? '',
+                        'id' => $value->id,
+                        'value' => $value->value,
+                    ];
+                }
+            }
+
+            $product->attribute_options = $attributeOptions;
+            unset($product->attributes); // Nếu không muốn trả về trong JSON
+            return $product;
+        });
 
         return response()->json([
             'status' => true,
@@ -97,11 +158,12 @@ class ProductController extends Controller
         ]);
     }
 
+
     //4. Chi tiết sản phẩm
     public function show($slug){
         $product = Product::where('slug', $slug)
             ->with([
-                'attributes.attributeValues',
+                'attributes.attributeValues.attribute',
                 'ratings.user',
                 'categories'
             ])->first();

@@ -11,9 +11,10 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_attribute_id',
-        'quantity',
+        'product_name',
         'price',
-        'total'
+        'quantity',
+        'total',
     ];
 
     public function order()
@@ -21,12 +22,10 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function productAttribute()
-    {
+    public function productAttribute(){
         return $this->belongsTo(ProductAttribute::class, 'product_attribute_id');
     }
 
-    // Shortcut để truy xuất sản phẩm qua product_attribute
     public function product()
     {
         return $this->hasOneThrough(

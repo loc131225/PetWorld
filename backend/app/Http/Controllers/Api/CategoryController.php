@@ -21,11 +21,13 @@ class CategoryController extends Controller
                     'id' => $parent->id,
                     'name' => $parent->name,
                     'image' => $parent->image,
+                    'slug' => $parent->slug,
                     'children' => $parent->children->map(function ($child) {
                         return [
                             'id' => $child->id,
                             'name' => $child->name,
                             'image' => $child->image,
+                            'slug' => $child->slug,
                         ];
                     }),
                 ];

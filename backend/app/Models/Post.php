@@ -17,4 +17,3 @@ class Post extends Model
         return $this->belongsTo(PostCategory::class, 'post_cate_id');
     }
 }
-

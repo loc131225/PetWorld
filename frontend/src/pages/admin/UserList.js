@@ -31,7 +31,10 @@ const UserList = () => {
           <div className="global-spacer" />
           <FaBell className="global-icon red" />
           <FaEnvelope className="global-icon red" />
-          <div className="global-user">Nguyễn Trung Kiên</div>
+          <div className="global-user-group">
+            <span className="global-user">Nguyễn Trung Kiên</span>
+            <img src={avatarImg} alt="avatar" className="global-avatar" />
+          </div>
         </div>
 
         {/* --- PHẦN QUẢN LÝ NGƯỜI DÙNG --- */}
