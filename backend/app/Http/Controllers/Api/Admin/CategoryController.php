@@ -42,6 +42,7 @@ class CategoryController extends Controller
             'image'       => 'nullable|string|max:255',
             'parent_id'   => 'nullable|exists:categories,id',
             'status'      => 'required|in:0,1',
+            'slug'        => 'nullable|string|max:255'
         ]);
 
         $category = Category::create([
