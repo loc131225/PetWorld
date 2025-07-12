@@ -50,7 +50,7 @@ class CategoryController extends Controller
         } else {
             $imagePath = null;
         }
-    
+        $request->slug = $request->slug ?? Str::slug($request->slug);
         $category = Category::create([
             'name'        => $request->name,
             'description' => $request->description,
