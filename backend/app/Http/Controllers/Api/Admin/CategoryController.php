@@ -36,31 +36,39 @@ class CategoryController extends Controller
     // Thêm danh mục
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'parent_id'   => 'nullable|exists:categories,id',
             'status'      => 'required|in:0,1',
-            'slug'        => 'required|string|max:255'
+            'slug'        => 'nullable|string|max:255'
         ]);
     
+        // Xử lý ảnh
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('categories', 'public');
         } else {
             $imagePath = null;
         }
-        $request->slug = $request->slug ?? Str::slug($request->slug);
+    
+        // Tạo slug nếu chưa có
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+    
+        // Lưu vào DB
         $category = Category::create([
-            'name'        => $request->name,
-            'description' => $request->description,
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
             'image'       => $imagePath,
-            'parent_id'   => $request->parent_id,
-            'status'      => $request->status,
-            'slug'        => $request->slug
+            'parent_id'   => $validated['parent_id'],
+            'status'      => $validated['status'],
+            'slug'        => $validated['slug']
         ]);
     
-        return response()->json(['message' => 'Thêm danh mục thành công', 'data' => $category], 201);
+        return response()->json([
+            'message' => 'Thêm danh mục thành công',
+            'data' => $category
+        ], 201);
     }
 
     // Xem chi tiết 1 danh mục
