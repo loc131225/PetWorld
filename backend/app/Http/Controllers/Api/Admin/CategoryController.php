@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -44,17 +45,17 @@ class CategoryController extends Controller
             'status'      => 'required|in:0,1',
             'slug'        => 'nullable|string|max:255'
         ]);
-    
+
         // Xử lý ảnh
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('categories', 'public');
         } else {
             $imagePath = null;
         }
-    
+
         // Tạo slug nếu chưa có
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-    
+
         // Lưu vào DB
         $category = Category::create([
             'name'        => $validated['name'],
@@ -64,7 +65,7 @@ class CategoryController extends Controller
             'status'      => $validated['status'],
             'slug'        => $validated['slug']
         ]);
-    
+
         return response()->json([
             'message' => 'Thêm danh mục thành công',
             'data' => $category
@@ -82,7 +83,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-    
+
         $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -91,21 +92,21 @@ class CategoryController extends Controller
             'status'      => 'required|in:0,1',
             'slug'        => 'required|string|max:255'
         ]);
-    
+
         // Nếu có file ảnh mới
         if ($request->hasFile('image')) {
             // Xóa file cũ nếu tồn tại
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-    
+
             // Lưu file mới
             $imagePath = $request->file('image')->store('categories', 'public');
         } else {
             // Giữ nguyên ảnh cũ
             $imagePath = $category->image;
         }
-    
+
         // Cập nhật dữ liệu
         $category->update([
             'name'        => $request->name,
@@ -115,7 +116,7 @@ class CategoryController extends Controller
             'status'      => $request->status,
             'slug'        => $request->slug
         ]);
-    
+
         return response()->json([
             'message' => 'Cập nhật danh mục thành công',
             'data'    => $category
