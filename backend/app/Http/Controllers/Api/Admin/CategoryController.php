@@ -84,28 +84,34 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
             'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'parent_id'   => 'nullable|exists:categories,id|not_in:' . $id,
+            'parent_id'   => 'nullable|exists:categories,id',
             'status'      => 'required|in:0,1',
-            'slug'        => 'required|string|max:255'
+            'slug'        => 'nullable|string|max:255'
         ]);
 
-        // Nếu có file ảnh mới
+        // Xử lý ảnh
         if ($request->hasFile('image')) {
-            // Xóa file cũ nếu tồn tại
-            if ($category->image) {
-                Storage::disk('public')->delete($category->image);
-            }
-
-            // Lưu file mới
             $imagePath = $request->file('image')->store('categories', 'public');
         } else {
-            // Giữ nguyên ảnh cũ
-            $imagePath = $category->image;
+            $imagePath = null;
         }
+
+        // Tạo slug nếu chưa có
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+
+        // Lưu vào DB
+        $category = Category::create([
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
+            'image'       => $imagePath,
+            'parent_id'   => $validated['parent_id'],
+            'status'      => $validated['status'],
+            'slug'        => $validated['slug']
+        ]);
 
         // Cập nhật dữ liệu
         $category->update([
