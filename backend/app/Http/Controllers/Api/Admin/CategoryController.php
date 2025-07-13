@@ -100,19 +100,6 @@ class CategoryController extends Controller
             $imagePath = null;
         }
 
-        // Tạo slug nếu chưa có
-        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-
-        // Lưu vào DB
-        $category = Category::create([
-            'name'        => $validated['name'],
-            'description' => $validated['description'],
-            'image'       => $imagePath,
-            'parent_id'   => $validated['parent_id'],
-            'status'      => $validated['status'],
-            'slug'        => $validated['slug']
-        ]);
-
         // Cập nhật dữ liệu
         $category->update([
             'name'        => $request->name,
