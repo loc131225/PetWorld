@@ -32,10 +32,20 @@ class UserController extends Controller
 
         return response()->json($users);
     }
+
     public function toggleStatus($id)
     {
         $user = User::findOrFail($id);
-        $user->status = !$user->status; // Đảo trạng thái 1 <-> 0
+
+        if ($user->status === 0){
+            $user->status = 1;
+        }
+        if ($user->status === 1) {
+            $user->status = 2;
+        } elseif ($user->status === 2) {
+            $user->status = 1;
+        }
+
         $user->save();
 
         return response()->json([
@@ -44,6 +54,7 @@ class UserController extends Controller
         ]);
     }
 
+
     public function toggleRole($id)
     {
         $user = User::findOrFail($id);
@@ -51,11 +62,6 @@ class UserController extends Controller
         // Nếu role là chuỗi
         if (in_array($user->role, ['admin', 'customer'])) {
             $user->role = $user->role === 'admin' ? 'customer' : 'admin';
-        }
-
-        // Nếu role là số
-        if (in_array($user->role, [0, 1])) {
-            $user->role = $user->role === 1 ? 0 : 1;
         }
 
         $user->save();
@@ -67,3 +73,4 @@ class UserController extends Controller
     }
 
 }
+
