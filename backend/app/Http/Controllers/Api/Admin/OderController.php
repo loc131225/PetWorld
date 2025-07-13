@@ -58,10 +58,42 @@ class OrderController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $order = Order::findOrFail($id);
-        $order->status = $request->input('status'); // e.g., 'pending', 'processing', 'done', 'cancel'
+
+        $currentStatus = $order->status;
+        $newStatus = $request->input('status');
+
+        // Nếu đã cancel thì không cho đổi nữa
+        if ($currentStatus === 'cancel') {
+            return response()->json(['message' => 'Đơn hàng đã bị hủy và không thể thay đổi trạng thái.'], 400);
+        }
+
+        // Xác định các trạng thái kế tiếp hợp lệ
+        $validTransitions = [
+            'pending' => ['processing', 'cancel'],
+            'processing' => ['done', 'cancel'],
+            'done' => [],
+        ];
+
+        // Nếu trạng thái hiện tại không nằm trong danh sách thì lỗi
+        if (!array_key_exists($currentStatus, $validTransitions)) {
+            return response()->json(['message' => 'Trạng thái hiện tại không hợp lệ.'], 400);
+        }
+
+        // Nếu trạng thái mới không được phép
+        if (!in_array($newStatus, $validTransitions[$currentStatus])) {
+            return response()->json([
+                'message' => 'Không thể chuyển từ trạng thái ' . $currentStatus . ' sang ' . $newStatus . '.'
+            ], 400);
+        }
+
+        // Cập nhật trạng thái
+        $order->status = $newStatus;
         $order->save();
 
-        return response()->json(['message' => 'Cập nhật trạng thái đơn hàng thành công.', 'status' => $order->status]);
+        return response()->json([
+            'message' => 'Cập nhật trạng thái đơn hàng thành công.',
+            'status' => $order->status
+        ]);
     }
 
     // Đổi trạng thái thanh toán
