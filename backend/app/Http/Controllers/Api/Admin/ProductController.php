@@ -110,6 +110,8 @@ class ProductController extends Controller
             'category_ids' => 'array|nullable',
         ]);
 
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+
         if ($request->hasFile('image')) {
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
