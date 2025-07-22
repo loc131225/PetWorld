@@ -80,10 +80,10 @@ class CategoryController extends Controller
     }
 
     // Cập nhật danh mục
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-
+    
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -92,30 +92,31 @@ class CategoryController extends Controller
             'status'      => 'required|in:0,1',
             'slug'        => 'nullable|string|max:255'
         ]);
-
-        // Xử lý ảnh
+    
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+    
+        $data = [
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
+            'parent_id'   => $validated['parent_id'],
+            'status'      => $validated['status'],
+            'slug'        => $validated['slug'],
+        ];
+    
+        // Chỉ xử lý ảnh nếu có file mới
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-            $imagePath = $request->file('image')->store('categories', 'public');
-            $category->image = $imagePath;
+    
+            // Lưu ảnh mới
+            $data['image'] = $request->file('image')->store('categories', 'public');
         }
-
-        // Tạo slug nếu chưa có
-        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-        
-        // Cập nhật dữ liệu
-        $category->update([
-            'name'        => $request->name,
-            'description' => $request->description,
-            'image'       => $imagePath,
-            'parent_id'   => $request->parent_id,
-            'status'      => $request->status,
-            'slug'        => $request->slug
-        ]);
-
+    
+        // Cập nhật danh mục
+        $category->update($data);
+    
         return response()->json([
             'message' => 'Cập nhật danh mục thành công',
             'data'    => $category
