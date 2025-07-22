@@ -80,7 +80,7 @@ class CategoryController extends Controller
     }
 
     // Cập nhật danh mục
-   public function update(Request $request, $id)
+      public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
     
@@ -93,35 +93,37 @@ class CategoryController extends Controller
             'slug'        => 'nullable|string|max:255'
         ]);
     
-        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-    
-        $data = [
-            'name'        => $validated['name'],
-            'description' => $validated['description'],
-            'parent_id'   => $validated['parent_id'],
-            'status'      => $validated['status'],
-            'slug'        => $validated['slug'],
-        ];
-    
-        // Chỉ xử lý ảnh nếu có file mới
+        // Xử lý ảnh nếu có ảnh mới
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
     
-            // Lưu ảnh mới
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $imagePath = $request->file('image')->store('categories', 'public');
+        } else {
+            $imagePath = $category->image; // Giữ nguyên ảnh cũ
         }
     
-        // Cập nhật danh mục
-        $category->update($data);
+        // Tạo slug nếu chưa có
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+    
+        // Cập nhật vào DB
+        $category->update([
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
+            'image'       => $imagePath,
+            'parent_id'   => $validated['parent_id'],
+            'status'      => $validated['status'],
+            'slug'        => $validated['slug']
+        ]);
     
         return response()->json([
             'message' => 'Cập nhật danh mục thành công',
             'data'    => $category
         ]);
     }
+
 
     // Xóa danh mục (soft delete)
     public function destroy($id)
