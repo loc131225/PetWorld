@@ -103,6 +103,9 @@ class CategoryController extends Controller
             $category->image = $imagePath;
         }
 
+        // Tạo slug nếu chưa có
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+        
         // Cập nhật dữ liệu
         $category->update([
             'name'        => $request->name,
