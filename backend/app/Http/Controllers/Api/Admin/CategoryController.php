@@ -95,9 +95,12 @@ class CategoryController extends Controller
 
         // Xử lý ảnh
         if ($request->hasFile('image')) {
+            // Xóa ảnh cũ nếu có
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
             $imagePath = $request->file('image')->store('categories', 'public');
-        } else {
-            $imagePath = null;
+            $category->image = $imagePath;
         }
 
         // Cập nhật dữ liệu
