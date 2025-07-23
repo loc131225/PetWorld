@@ -48,9 +48,10 @@ class CategoryController extends Controller
 
         // Xử lý ảnh
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public');
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('categories', $filename, 'public');
         } else {
-            $imagePath = null;
+            $filename = null;
         }
 
         // Tạo slug nếu chưa có
@@ -60,7 +61,7 @@ class CategoryController extends Controller
         $category = Category::create([
             'name'        => $validated['name'],
             'description' => $validated['description'],
-            'image'       => $imagePath,
+            'image'       => $filename,
             'parent_id'   => $validated['parent_id'],
             'status'      => $validated['status'],
             'slug'        => $validated['slug']
@@ -95,21 +96,21 @@ class CategoryController extends Controller
 
         // Xử lý ảnh nếu có ảnh mới
         if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
             if ($category->image) {
-                Storage::disk('public')->delete($category->image);
+                Storage::disk('public')->delete('categories/' . $category->image); // phải thêm 'categories/'
             }
 
-            $imagePath = $request->file('image')->store('categories', 'public');
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('categories', $filename, 'public');
         } else {
-            $imagePath = $category->image; // Giữ nguyên ảnh cũ
+            $filename = $category->image;
         }
+
+        // Gán lại ảnh vào validated để lưu
+        $validated['image'] = $filename;
 
         // Tạo slug nếu chưa có
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-
-        // Gán lại ảnh vào validated để lưu
-        $validated['image'] = $imagePath;
 
         // Cập nhật vào DB
         $category->update($validated);
