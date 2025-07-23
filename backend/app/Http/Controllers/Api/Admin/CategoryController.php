@@ -80,10 +80,10 @@ class CategoryController extends Controller
     }
 
     // Cập nhật danh mục
-      public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-    
+
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -92,32 +92,28 @@ class CategoryController extends Controller
             'status'      => 'required|in:0,1',
             'slug'        => 'nullable|string|max:255'
         ]);
-    
+
         // Xử lý ảnh nếu có ảnh mới
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-    
+
             $imagePath = $request->file('image')->store('categories', 'public');
         } else {
             $imagePath = $category->image; // Giữ nguyên ảnh cũ
         }
-    
+
         // Tạo slug nếu chưa có
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-    
+
+        // Gán lại ảnh vào validated để lưu
+        $validated['image'] = $imagePath;
+
         // Cập nhật vào DB
-        $category->update([
-            'name'        => $validated['name'],
-            'description' => $validated['description'],
-            'image'       => $imagePath,
-            'parent_id'   => $validated['parent_id'],
-            'status'      => $validated['status'],
-            'slug'        => $validated['slug']
-        ]);
-    
+        $category->update($validated);
+
         return response()->json([
             'message' => 'Cập nhật danh mục thành công',
             'data'    => $category
