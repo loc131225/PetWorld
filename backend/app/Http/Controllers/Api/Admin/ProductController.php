@@ -58,14 +58,18 @@ class ProductController extends Controller
 
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+       if ($request->hasFile('image')) {
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('products', $filename, 'public');
+            $validated['image'] = $filename;
         }
-
+        
         if ($request->hasFile('second_image')) {
-            $validated['second_image'] = $request->file('second_image')->store('products', 'public');
+            $filename2 = time() . '_' . $request->file('second_image')->getClientOriginalName();
+            $request->file('second_image')->storeAs('products', $filename2, 'public');
+            $validated['second_image'] = $filename2;
         }
-
+        
         $product = Product::create($validated);
         $product->categories()->sync($request->category_ids ?? []);
 
@@ -112,16 +116,22 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             if ($product->image) {
-                Storage::disk('public')->delete($product->image);
+                Storage::disk('public')->delete('products/' . $product->image);
             }
-            $validated['image'] = $request->file('image')->store('products', 'public');
+        
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('products', $filename, 'public');
+            $validated['image'] = $filename;
         }
-
+        
         if ($request->hasFile('second_image')) {
             if ($product->second_image) {
-                Storage::disk('public')->delete($product->second_image);
+                Storage::disk('public')->delete('products/' . $product->second_image);
             }
-            $validated['second_image'] = $request->file('second_image')->store('products', 'public');
+        
+            $filename2 = time() . '_' . $request->file('second_image')->getClientOriginalName();
+            $request->file('second_image')->storeAs('products', $filename2, 'public');
+            $validated['second_image'] = $filename2;
         }
 
         $product->update($validated);
