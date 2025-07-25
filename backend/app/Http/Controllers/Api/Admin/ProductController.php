@@ -186,6 +186,10 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
+        $product->attributes()->each(function ($productAttr) {
+            $productAttr->attributeValues()->delete();
+            $productAttr->delete();
+        });
         $product->delete();
 
         return response()->json(['message' => 'Đã xóa sản phẩm']);
