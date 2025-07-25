@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // Lấy danh sách sản phẩm kèm lọc tìm kiếm, danh mục, ngày tạo và best seller
+    // Danh sách sản phẩm có lọc
     public function index(Request $request)
     {
-        $query = Product::with('categories');
+        $query = Product::with(['categories', 'productAttributes']);
 
         if ($request->filled('keyword')) {
             $query->where('name', 'like', '%' . $request->keyword . '%');
@@ -21,7 +21,7 @@ class ProductController extends Controller
 
         if ($request->filled('category')) {
             $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('name', $request->category); // hoặc category_id nếu frontend gửi id
+                $q->where('name', $request->category);
             });
         }
 
@@ -31,72 +31,70 @@ class ProductController extends Controller
             $query->orderBy('created_at', 'asc');
         }
 
-        if ($request->best_seller == 1) {
-            $query->where('is_best_seller', 1);
-        }
+        // Bạn có thể thêm best_seller nếu trường này có trong bảng
+        // if ($request->best_seller == 1) {
+        //     $query->where('is_best_seller', 1);
+        // }
 
         $products = $query->paginate(5);
-
         return response()->json($products);
     }
 
-    // Tạo mới sản phẩm và gán danh mục + thuộc tính
+    // Tạo sản phẩm + gán danh mục + biến thể (product_attributes)
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string',
             'slug' => 'nullable|string',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'sale_price' => 'nullable|numeric',
-            'stock_quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'second_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'required|boolean',
-            'category_ids' => 'array|nullable',
+            'category_ids' => 'nullable|array',
+            'attributes' => 'nullable|array',
         ]);
 
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
 
-       if ($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             $filename = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->storeAs('products', $filename, 'public');
             $validated['image'] = $filename;
         }
-        
+
         if ($request->hasFile('second_image')) {
             $filename2 = time() . '_' . $request->file('second_image')->getClientOriginalName();
             $request->file('second_image')->storeAs('products', $filename2, 'public');
             $validated['second_image'] = $filename2;
         }
-        
+
         $product = Product::create($validated);
         $product->categories()->sync($request->category_ids ?? []);
 
         if ($request->has('attributes')) {
             foreach ($request->attributes as $attr) {
-                $productAttr = $product->productAttributes()->create();
-                foreach ($attr['values'] as $value) {
-                    $productAttr->attributeValues()->create([
-                        'attribute_id' => $attr['attribute_id'],
-                        'value' => $value,
-                        'status' => 1,
-                    ]);
-                }
+                $product->productAttributes()->create([
+                    'price' => $attr['price'],
+                    'sale_price' => $attr['sale_price'] ?? null,
+                    'stock_quantity' => $attr['stock_quantity'] ?? 0,
+                ]);
             }
         }
 
-        return response()->json(['message' => 'Thêm sản phẩm thành công', 'product' => $product], 201);
+        return response()->json([
+            'message' => 'Thêm sản phẩm thành công',
+            'product' => $product->load('productAttributes')
+        ], 201);
     }
 
-    // Lấy chi tiết sản phẩm kèm danh mục và thuộc tính
+    // Chi tiết sản phẩm
     public function show($id)
     {
-        $product = Product::with(['categories', 'productAttributes.attributeValues'])->findOrFail($id);
+        $product = Product::with(['categories', 'productAttributes'])->findOrFail($id);
         return response()->json($product);
     }
 
-    // Cập nhật sản phẩm, danh mục và thuộc tính
+    // Cập nhật sản phẩm
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
@@ -105,30 +103,27 @@ class ProductController extends Controller
             'name' => 'sometimes|required|string',
             'slug' => 'nullable|string',
             'description' => 'nullable|string',
-            'price' => 'sometimes|required|numeric',
-            'sale_price' => 'nullable|numeric',
-            'stock_quantity' => 'sometimes|required|integer',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'second_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'sometimes|required|boolean',
-            'category_ids' => 'array|nullable',
+            'category_ids' => 'nullable|array',
+            'attributes' => 'nullable|array',
+            'remove_attributes' => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('image')) {
             if ($product->image) {
                 Storage::disk('public')->delete('products/' . $product->image);
             }
-        
             $filename = time() . '_' . $request->file('image')->getClientOriginalName();
             $request->file('image')->storeAs('products', $filename, 'public');
             $validated['image'] = $filename;
         }
-        
+
         if ($request->hasFile('second_image')) {
             if ($product->second_image) {
                 Storage::disk('public')->delete('products/' . $product->second_image);
             }
-        
             $filename2 = time() . '_' . $request->file('second_image')->getClientOriginalName();
             $request->file('second_image')->storeAs('products', $filename2, 'public');
             $validated['second_image'] = $filename2;
@@ -137,44 +132,32 @@ class ProductController extends Controller
         $product->update($validated);
         $product->categories()->sync($request->category_ids ?? []);
 
-       // Xoá thuộc tính cũ nếu request có cờ remove
+        // Xoá toàn bộ biến thể cũ nếu được yêu cầu
         if ($request->boolean('remove_attributes')) {
-            foreach ($product->productAttributes as $productAttribute) {
-                $productAttribute->attributeValues()->delete();
-                $productAttribute->delete();
-            }
+            $product->productAttributes()->delete();
         }
 
-        // Thêm thuộc tính mới nếu request có attributes
+        // Thêm lại biến thể mới
         if ($request->has('attributes')) {
             foreach ($request->attributes as $attr) {
-                $productAttr = $product->productAttributes()->create();
-                foreach ($attr['values'] as $value) {
-                    $productAttr->attributeValues()->create([
-                        'attribute_id' => $attr['attribute_id'],
-                        'value' => $value,
-                        'status' => 1,
-                    ]);
-                }
+                $product->productAttributes()->create([
+                    'price' => $attr['price'],
+                    'sale_price' => $attr['sale_price'] ?? null,
+                    'stock_quantity' => $attr['stock_quantity'] ?? 0,
+                ]);
             }
         }
 
         return response()->json(['message' => 'Cập nhật sản phẩm thành công']);
     }
 
-    // Xoá sản phẩm + liên kết danh mục và thuộc tính nếu có
+    // Xoá sản phẩm
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
 
         $product->categories()->detach();
-
-        // Xoá thuộc tính và value
-        foreach ($product->productAttributes as $productAttribute) {
-            $productAttribute->attributeValues()->delete();
-            $productAttribute->delete();
-        }
-
+        $product->productAttributes()->delete();
         $product->delete();
 
         return response()->json(['message' => 'Xoá sản phẩm thành công']);
