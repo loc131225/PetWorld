@@ -73,11 +73,16 @@ class ProductController extends Controller
             }
 
             // Upload ảnh sản phẩm chính
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('products', 'public');
-                    $product->images()->create(['url' => $imagePath]);
-                }
+            if ($request->hasFile('image')) {
+                $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('products', $filename, 'public');
+                $product->image = 'products/' . $filename;
+            }
+            
+            if ($request->hasFile('second_image')) {
+                $secondFilename = time() . '_' . $request->file('second_image')->getClientOriginalName();
+                $request->file('second_image')->storeAs('products', $secondFilename, 'public');
+                $product->second_image = 'products/' . $secondFilename;
             }
 
             DB::commit();
@@ -97,8 +102,82 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Tương tự như store nhưng cần update thay vì create
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'quantity' => 'required|integer',
+            'category_id' => 'required|integer',
+            'price' => 'required|numeric',
+            'price_sale' => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'status' => 'required|boolean',
+            'images' => 'nullable|array',
+            'images.*' => 'image|max:2048',
+            'attributes' => 'nullable|array',
+        ]);
+    
+        DB::beginTransaction();
+        try {
+            $product = Product::findOrFail($id);
+    
+            $product->update([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'quantity' => $request->quantity,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'price' => $request->price,
+                'price_sale' => $request->price_sale,
+                'status' => $request->status,
+            ]);
+    
+            // Xóa các biến thể cũ
+            $oldProductAttributes = $product->attributes; // quan hệ hasMany ProductAttribute
+            foreach ($oldProductAttributes as $productAttr) {
+                // Xóa tất cả attribute_values của biến thể
+                AttributeValue::where('product_attribute_id', $productAttr->id)->delete();
+                $productAttr->delete();
+            }
+    
+            // Thêm lại các biến thể mới
+            if ($request->has('attributes')) {
+                foreach ($request->attributes as $attributeSet) {
+                    $productAttribute = ProductAttribute::create([
+                        'product_id' => $product->id,
+                    ]);
+    
+                    foreach ($attributeSet['values'] as $attrValue) {
+                        AttributeValue::create([
+                            'attribute_id' => $attributeSet['attribute_id'],
+                            'product_attribute_id' => $productAttribute->id,
+                            'value' => $attrValue,
+                            'status' => 1,
+                        ]);
+                    }
+                }
+            }
+    
+            // Cập nhật lại ảnh nếu có upload mới
+            if ($request->hasFile('image')) {
+                $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('products', $filename, 'public');
+                $product->image = 'products/' . $filename;
+            }
+            
+            if ($request->hasFile('second_image')) {
+                $secondFilename = time() . '_' . $request->file('second_image')->getClientOriginalName();
+                $request->file('second_image')->storeAs('products', $secondFilename, 'public');
+                $product->second_image = 'products/' . $secondFilename;
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Cập nhật sản phẩm thành công']);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Lỗi khi cập nhật sản phẩm', 'error' => $e->getMessage()], 500);
+        }
     }
+
 
     public function destroy($id)
     {
