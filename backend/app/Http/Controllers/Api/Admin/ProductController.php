@@ -84,7 +84,8 @@ class ProductController extends Controller
                 $request->file('second_image')->storeAs('products', $secondFilename, 'public');
                 $product->second_image = 'products/' . $secondFilename;
             }
-
+            $product->save();
+            
             DB::commit();
             return response()->json(['message' => 'Thêm sản phẩm thành công'], 201);
 
