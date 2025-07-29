@@ -20,8 +20,8 @@ class Rating extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function product()
+    public function productAttribute()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(ProductAttribute::class, 'product_attribute_id');
     }
 }
