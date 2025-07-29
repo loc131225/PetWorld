@@ -9,7 +9,7 @@ class Rating extends Model
     protected $table = 'ratings';
 
     protected $fillable = [
-        'product_id',
+        'product_attribute_id',
         'user_id',
         'rating',
         'comment',
