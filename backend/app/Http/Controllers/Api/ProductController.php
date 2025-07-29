@@ -1,222 +1,161 @@
 <?php
-
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\Product;
-use App\Models\Product_category;
+use App\Models\ProductAttribute;
+use App\Models\AttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function searchProductsBySlug($query)
+    public function index(Request $request)
     {
-    // Tìm các sản phẩm có slug chứa chuỗi query (không phân biệt chữ hoa/thường)
-    $products = Product::where('slug', 'like', '%' . $query . '%')->get();
+        $query = Product::with('productAttributes.attributeValues');
 
-    // Chuẩn bị phản hồi
-    if ($products->isNotEmpty()) {
-        $response = [
-            'status' => true,
-            'message' => 'Danh sách sản phẩm được tìm thấy',
-            'data' => $products
-        ];
-    } else {
-        $response = [
-            'status' => false,
-            'message' => 'Không tìm thấy sản phẩm nào với slug chứa "' . $query . '"',
-            'data' => []
-        ];
-    }
-
-    return response()->json($response);
-}
-    //1. Sản phẩm thuộc danh mục chó
-    public function dogProducts(){
-        $categoryId = Category::where('name', 'like', 'Dành cho chó')->value('id');
-        if (!$categoryId) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy danh mục chó',
-                'data' => []
-            ]);
+        if ($request->filled('keyword')) {
+            $query->where('name', 'like', '%' . $request->keyword . '%');
         }
 
-        $products = Product::whereHas('categories', function ($query) use ($categoryId){
-            $query->where('categories.id', $categoryId);
-        })->with(['attributes.attributeValues'])->latest()->take(4)->get();
-
-        // Gắn thêm thuộc tính dưới dạng flatten mảng để dễ xử lý bên frontend
-        $products->map(function ($product) {
-            $attributeOptions = [];
-
-            foreach ($product->attributes as $attr) {
-                foreach ($attr->attributeValues as $value) {
-                    $attributeOptions[] = [
-                        'id' => $value->id,
-                        'value' => $value->value,
-                        'attribute_name' => $value->attribute->name ?? '', // bạn có thể nối thêm tên thuộc tính nếu cần
-                    ];
-                }
-            }
-
-            $product->attribute_options = $attributeOptions;
-            unset($product->attributes); // không cần thiết nếu chỉ dùng attribute_options
-            return $product;
-        });
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Danh sách sản phẩm thuộc danh mục chó',
-            'data' => $products
-        ]);
+        return response()->json($query->paginate(10));
     }
 
-    //2. Sản phẩm thuộc danh mục mèo
-    public function catProducts(){
-        $categoryId = Category::where('name', 'like', 'Dành cho mèo')->value('id');
-
-        if (!$categoryId) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy danh mục mèo',
-                'data' => []
-            ]);
-        }
-
-        $products = Product::whereHas('categories', function ($query) use ($categoryId){
-            $query->where('categories.id', $categoryId);
-        })->with(['attributes.attributeValues'])->latest()->take(4)->get();
-
-        // Gắn thêm thuộc tính dưới dạng flatten mảng để dễ xử lý bên frontend
-        $products->map(function ($product) {
-            $attributeOptions = [];
-
-            foreach ($product->attributes as $attr) {
-                foreach ($attr->attributeValues as $value) {
-                    $attributeOptions[] = [
-                        'id' => $value->id,
-                        'value' => $value->value,
-                        'attribute_name' => $value->attribute->name ?? '', // bạn có thể nối thêm tên thuộc tính nếu cần
-                    ];
-                }
-            }
-
-            $product->attribute_options = $attributeOptions;
-            unset($product->attributes); // không cần thiết nếu chỉ dùng attribute_options
-            return $product;
-        });
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Danh sách sản phẩm thuộc danh mục mèo',
-            'data' => $products
-        ]);
-    }
-
-    //3. Sản phẩm bán chạy nhất
-    public function bestSellingProducts()
+    public function show($id)
     {
-        // Lấy ID các sản phẩm bán chạy nhất
-        $topProductIds = DB::table('product_attributes')
-            ->join('order_items', 'product_attributes.id', '=', 'order_items.product_attribute_id')
-            ->select('product_attributes.product_id', DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('product_attributes.product_id')
-            ->orderByDesc('total_sold')
-            ->limit(4)
-            ->pluck('product_attributes.product_id');
+        $product = Product::with('productAttributes.attributeValues')->findOrFail($id);
+        return response()->json($product);
+    }
 
-        // Truy vấn bằng Eloquent để load đầy đủ attributes và attributeValues
-        $products = Product::whereIn('id', $topProductIds)
-            ->with(['attributes.attributeValues.attribute'])
-            ->get();
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
 
-        $products->map(function ($product) {
-            $attributeOptions = [];
+        try {
+            // Lưu ảnh nếu có
+            if ($request->hasFile('image')) {
+                $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('products', $filename, 'public');
+            } else {
+                $filename = null;
+            }
 
-            foreach ($product->attributes as $attr) {
-                foreach ($attr->attributeValues as $value) {
-                    $attributeOptions[] = [
-                        'attribute_name' => $value->attribute->name ?? '',
-                        'id' => $value->id,
-                        'value' => $value->value,
-                    ];
+            // Tạo sản phẩm
+            $product = Product::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'description' => $request->description,
+                'image' => $filename,
+                'status' => $request->status,
+            ]);
+
+            // Tạo biến thể sản phẩm
+            foreach ($request->product_attributes as $pa) {
+                $productAttr = ProductAttribute::create([
+                    'product_id' => $product->id,
+                    'price' => $pa['price'],
+                    'quantity' => $pa['quantity'],
+                    'status' => $pa['status'],
+                ]);
+
+                foreach ($pa['attributes'] as $attr) {
+                    AttributeValue::create([
+                        'product_attribute_id' => $productAttr->id,
+                        'attribute_id' => $attr['attribute_id'],
+                        'value' => $attr['value'],
+                        'status' => 1,
+                    ]);
                 }
             }
 
-            $product->attribute_options = $attributeOptions;
-            unset($product->attributes); // Nếu không muốn trả về trong JSON
-            return $product;
+            DB::commit();
+            return response()->json(['message' => 'Thêm sản phẩm thành công']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $product = Product::findOrFail($id);
+
+            // Cập nhật ảnh nếu có ảnh mới
+            if ($request->hasFile('image')) {
+                // Xóa ảnh cũ nếu có
+                if ($product->image) {
+                    Storage::disk('public')->delete('products/' . $product->image);
+                }
+
+                $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+                $request->file('image')->storeAs('products', $filename, 'public');
+            } else {
+                $filename = $product->image;
+            }
+
+            // Cập nhật thông tin sản phẩm
+            $product->update([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'description' => $request->description,
+                'image' => $filename,
+                'status' => $request->status,
+            ]);
+
+            // Xóa các biến thể và attribute value cũ
+            $product->productAttributes()->each(function ($pa) {
+                $pa->attributeValues()->delete();
+                $pa->delete();
+            });
+
+            // Tạo lại các biến thể mới
+            foreach ($request->product_attributes as $pa) {
+                $productAttr = ProductAttribute::create([
+                    'product_id' => $product->id,
+                    'price' => $pa['price'],
+                    'quantity' => $pa['quantity'],
+                    'status' => $pa['status'],
+                ]);
+
+                foreach ($pa['attributes'] as $attr) {
+                    AttributeValue::create([
+                        'product_attribute_id' => $productAttr->id,
+                        'attribute_id' => $attr['attribute_id'],
+                        'value' => $attr['value'],
+                        'status' => 1,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Cập nhật sản phẩm thành công']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $product->productAttributes()->each(function ($pa) {
+            $pa->attributeValues()->delete();
+            $pa->delete();
         });
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Danh sách sản phẩm bán chạy nhất',
-            'data' => $products
-        ]);
-    }
-
-
-    //4. Chi tiết sản phẩm
-    public function show($slug){
-        $product = Product::where('slug', $slug)
-            ->with([
-                'attributes.attributeValues.attribute',
-                'ratings.user',
-                'categories'
-            ])->first();
-
-        if(!$product){
-            return response()->json([
-                'status' => false,
-                'message' => 'Sản phẩm không tồn tại',
-            ], 404);
+        if ($product->image) {
+            Storage::disk('public')->delete('products/' . $product->image);
         }
 
-        // Lấy danh sách ID danh mục mà sản phẩm thuộc về
-    $categoryIds = $product->categories->pluck('id');
+        $product->delete();
 
-    // Lấy danh sách product_id khác với sản phẩm hiện tại, trong cùng danh mục (không trùng)
-    $relatedProductIds = Product_category::whereIn('category_id', $categoryIds)
-        ->where('product_id', '!=', $product->id)
-        ->distinct()
-        ->limit(4)
-        ->pluck('product_id');
-
-    // Truy vấn sản phẩm theo ID
-    $relatedProducts = Product::whereIn('id', $relatedProductIds)->get();
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Chi tiết sản phẩm',
-        'data' => [
-            'product' => $product,
-            'related_products' => $relatedProducts
-        ]
-    ]);
-    }
-
-    //Sản phẩm theo danh mục
-    public function productsByCategory($slug){
-        $category = Category::where('slug', $slug)->first();
-
-        if(!$category){
-            return response()->json([
-                'status' => false,
-                'message' => 'Danh mục không tồn tại'
-            ], 404);
-        }
-
-        $products = Product::whereHas('categories', function ($query) use ($category){
-            $query->where('categories.id', $category->id);
-        })->latest()->paginate(12);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Danh mục sản phẩm theo danh mục',
-            'data' => $products
-        ]);
+        return response()->json(['message' => 'Đã xóa sản phẩm']);
     }
 }
+
