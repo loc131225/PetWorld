@@ -34,7 +34,7 @@ class ProductController extends Controller
         DB::beginTransaction();
 
         try {
-            // Lưu ảnh nếu có
+            // Lưu ảnh chính nếu có
             if ($request->hasFile('image')) {
                 $filename = time() . '_' . $request->file('image')->getClientOriginalName();
                 $request->file('image')->storeAs('products', $filename, 'public');
@@ -52,12 +52,21 @@ class ProductController extends Controller
             ]);
 
             // Tạo biến thể sản phẩm
-            foreach ($request->product_attributes as $pa) {
+            foreach ($request->product_attributes as $index => $pa) {
+                // Lưu ảnh phụ nếu có
+                $imageSecondName = null;
+                if ($request->hasFile("product_attributes.$index.image_second")) {
+                    $file = $request->file("product_attributes.$index.image_second");
+                    $imageSecondName = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('products/variants', $imageSecondName, 'public');
+                }
+
                 $productAttr = ProductAttribute::create([
                     'product_id' => $product->id,
                     'price' => $pa['price'],
                     'quantity' => $pa['quantity'],
                     'status' => $pa['status'],
+                    'image_second' => $imageSecondName,
                 ]);
 
                 foreach ($pa['attributes'] as $attr) {
@@ -85,9 +94,8 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            // Cập nhật ảnh nếu có ảnh mới
+            // Cập nhật ảnh chính nếu có ảnh mới
             if ($request->hasFile('image')) {
-                // Xóa ảnh cũ nếu có
                 if ($product->image) {
                     Storage::disk('public')->delete('products/' . $product->image);
                 }
@@ -107,19 +115,33 @@ class ProductController extends Controller
                 'status' => $request->status,
             ]);
 
-            // Xóa các biến thể và attribute value cũ
+            // Xóa biến thể và giá trị cũ
             $product->attributes()->each(function ($pa) {
+                // Xóa ảnh phụ nếu có
+                if ($pa->image_second) {
+                    Storage::disk('public')->delete('products/variants/' . $pa->image_second);
+                }
+
                 $pa->attributeValues()->delete();
                 $pa->delete();
             });
 
-            // Tạo lại các biến thể mới
-            foreach ($request->product_attributes as $pa) {
+            // Tạo lại biến thể mới
+            foreach ($request->product_attributes as $index => $pa) {
+                // Lưu ảnh phụ mới nếu có
+                $imageSecondName = null;
+                if ($request->hasFile("product_attributes.$index.image_second")) {
+                    $file = $request->file("product_attributes.$index.image_second");
+                    $imageSecondName = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('products/variants', $imageSecondName, 'public');
+                }
+
                 $productAttr = ProductAttribute::create([
                     'product_id' => $product->id,
                     'price' => $pa['price'],
                     'quantity' => $pa['quantity'],
                     'status' => $pa['status'],
+                    'image_second' => $imageSecondName,
                 ]);
 
                 foreach ($pa['attributes'] as $attr) {
@@ -145,6 +167,11 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $product->attributes()->each(function ($pa) {
+            // Xóa ảnh phụ nếu có
+            if ($pa->image_second) {
+                Storage::disk('public')->delete('products/variants/' . $pa->image_second);
+            }
+
             $pa->attributeValues()->delete();
             $pa->delete();
         });
@@ -158,4 +185,3 @@ class ProductController extends Controller
         return response()->json(['message' => 'Đã xóa sản phẩm']);
     }
 }
-
