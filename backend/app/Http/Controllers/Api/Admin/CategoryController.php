@@ -59,7 +59,7 @@ class CategoryController extends Controller
 
         // Lưu vào DB
         $category = Category::create([
-            'name'        => $validated['name'],
+            'name'        => $validated['name'] ,
             'description' => $validated['description'],
             'image'       => $filename,
             'parent_id'   => $validated['parent_id'],
