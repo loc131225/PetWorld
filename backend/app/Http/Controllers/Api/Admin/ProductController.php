@@ -119,7 +119,7 @@ class ProductController extends Controller
             $product->attributes()->each(function ($pa) {
                 // Xóa ảnh phụ nếu có
                 if ($pa->image_second) {
-                    Storage::disk('public')->delete('products/variants/' . $pa->image_second);
+                    Storage::disk('public')->delete('products/' . $pa->image_second);
                 }
 
                 $pa->attributeValues()->delete();
@@ -169,7 +169,7 @@ class ProductController extends Controller
         $product->attributes()->each(function ($pa) {
             // Xóa ảnh phụ nếu có
             if ($pa->image_second) {
-                Storage::disk('public')->delete('products/variants/' . $pa->image_second);
+                Storage::disk('public')->delete('products/' . $pa->image_second);
             }
 
             $pa->attributeValues()->delete();
