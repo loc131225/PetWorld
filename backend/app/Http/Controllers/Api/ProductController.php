@@ -58,7 +58,7 @@ class ProductController extends Controller
                 if ($request->hasFile("product_attributes.$index.image_second")) {
                     $file = $request->file("product_attributes.$index.image_second");
                     $imageSecondName = time() . '_' . $file->getClientOriginalName();
-                    $file->storeAs('products/variants', $imageSecondName, 'public');
+                    $file->storeAs('products', $imageSecondName, 'public');
                 }
 
                 $productAttr = ProductAttribute::create([
@@ -133,7 +133,7 @@ class ProductController extends Controller
                 if ($request->hasFile("product_attributes.$index.image_second")) {
                     $file = $request->file("product_attributes.$index.image_second");
                     $imageSecondName = time() . '_' . $file->getClientOriginalName();
-                    $file->storeAs('products/variants', $imageSecondName, 'public');
+                    $file->storeAs('products', $imageSecondName, 'public');
                 }
 
                 $productAttr = ProductAttribute::create([
