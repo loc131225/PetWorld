@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('productAttributes.attributeValues');
+        $query = Product::with('attributes.attributeValues');
 
         if ($request->filled('keyword')) {
             $query->where('name', 'like', '%' . $request->keyword . '%');
@@ -25,7 +25,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::with('productAttributes.attributeValues')->findOrFail($id);
+        $product = Product::with('attributes.attributeValues')->findOrFail($id);
         return response()->json($product);
     }
 
@@ -108,7 +108,7 @@ class ProductController extends Controller
             ]);
 
             // Xóa các biến thể và attribute value cũ
-            $product->productAttributes()->each(function ($pa) {
+            $product->attributes()->each(function ($pa) {
                 $pa->attributeValues()->delete();
                 $pa->delete();
             });
@@ -144,7 +144,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $product->productAttributes()->each(function ($pa) {
+        $product->attributes()->each(function ($pa) {
             $pa->attributeValues()->delete();
             $pa->delete();
         });
