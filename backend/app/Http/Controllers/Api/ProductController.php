@@ -51,6 +51,11 @@ class ProductController extends Controller
                 'status' => $request->status,
             ]);
 
+            // Gắn danh mục sản phẩm
+           if ($request->has('category_ids')) {
+                $product->categories()->sync($request->category_ids);
+            }
+
             // Tạo biến thể sản phẩm
             foreach ($request->product_attributes as $index => $pa) {
                 // Lưu ảnh phụ nếu có
@@ -115,11 +120,18 @@ class ProductController extends Controller
                 'status' => $request->status,
             ]);
 
+            // Xóa liên kết cũ trong product_categories
+            \App\Models\Product_category::where('product_id', $product->id)->delete();
+
+            // Gắn lại danh mục mới
+            if ($request->has('category_ids')) {
+                $product->categories()->sync($request->category_ids);
+            }
+
             // Xóa biến thể và giá trị cũ
             $product->attributes()->each(function ($pa) {
-                // Xóa ảnh phụ nếu có
                 if ($pa->image_second) {
-                    Storage::disk('public')->delete('products' . $pa->image_second);
+                    Storage::disk('public')->delete('products/' . $pa->image_second);
                 }
 
                 $pa->attributeValues()->delete();
@@ -128,7 +140,6 @@ class ProductController extends Controller
 
             // Tạo lại biến thể mới
             foreach ($request->product_attributes as $index => $pa) {
-                // Lưu ảnh phụ mới nếu có
                 $imageSecondName = null;
                 if ($request->hasFile("product_attributes.$index.image_second")) {
                     $file = $request->file("product_attributes.$index.image_second");
@@ -166,22 +177,27 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
+        // Xóa ảnh và dữ liệu của các biến thể
         $product->attributes()->each(function ($pa) {
-            // Xóa ảnh phụ nếu có
             if ($pa->image_second) {
                 Storage::disk('public')->delete('products/' . $pa->image_second);
             }
-
             $pa->attributeValues()->delete();
             $pa->delete();
         });
 
+        // Xóa ảnh chính nếu có
         if ($product->image) {
             Storage::disk('public')->delete('products/' . $product->image);
         }
 
+        // ❗️Xóa liên kết với danh mục
+        $product->categories()->detach();
+
+        // Xóa sản phẩm
         $product->delete();
 
         return response()->json(['message' => 'Đã xóa sản phẩm']);
     }
+
 }
