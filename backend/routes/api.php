@@ -90,6 +90,9 @@ Route::middleware('auth:sanctum')->group(function () {
 // Admin routes
 Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
 
+    Route::middleware('permission:manage_attributes')->prefix('admin/attributes')->group(function () {
+        Route::get('/', [AttributeController::class, 'index']);
+    });
     // Quản lý sản phẩm - cần permission: manage_products
     Route::middleware('permission:manage_products')->prefix('products')->group(function () {
         Route::get('/', [AdminProductController::class, 'index']);
