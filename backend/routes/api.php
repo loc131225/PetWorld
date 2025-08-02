@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\FavoriteProductController;
 use App\Http\Controllers\Api\ContactController;
 
 // Admin
+use App\Http\Controllers\Api\Admin\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
@@ -91,7 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
 
     Route::middleware('permission:manage_attributes')->prefix('admin/attributes')->group(function () {
-        Route::get('/', [AttributeController::class, 'index']);
+        Route::get('/', [AdminAttributeController::class, 'index']);
     });
     // Quản lý sản phẩm - cần permission: manage_products
     Route::middleware('permission:manage_products')->prefix('products')->group(function () {
