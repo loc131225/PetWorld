@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attribute;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\AttributeValue;
@@ -15,112 +15,130 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with(['productAttributes.attributeValues', 'categories']);
+        $perPage = $request->input('per_page', 10);
+        $page = $request->input('page', 1);
+
+        $query = Product::with(['attributes.attributeValues', 'categories']);
 
         if ($request->filled('keyword')) {
             $query->where('name', 'like', '%' . $request->keyword . '%');
         }
 
-        return response()->json($query->paginate(10));
+        $products = $query->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $products->items(),
+            'meta' => [
+                'current_page' => $products->currentPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+                'last_page' => $products->lastPage(),
+            ]
+        ]);
     }
 
     public function show($id)
     {
-        $product = Product::with(['productAttributes.attributeValues', 'categories'])->findOrFail($id);
+        $product = Product::with(['attributes.attributeValues', 'categories'])->findOrFail($id);
         return response()->json($product);
     }
 
-    public function store(Request $request)
+    public function showById($id)
     {
-        DB::beginTransaction();
+        $product = Product::with(['categories', 'attributes.attributeValues'])->findOrFail($id);
+        $all_attributes = Attribute::where('status', true)->select('id', 'name')->get();
 
-        try {
-            // Lưu ảnh chính
-            $filename = null;
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $filename = time() . '_' . $image->getClientOriginalName();
-                $image->storeAs('products', $filename, 'public');
-            }
+        return response()->json([
+            'product' => $product,
+            'all_attributes' => $all_attributes
+        ]);
+    }
 
-            // Lưu ảnh phụ
-            if ($request->hasFile('second_image')) {
-                $secondImage = $request->file('second_image');
-                $secondImageName = time() . '_second_' . $secondImage->getClientOriginalName();
-                $secondImage->storeAs('products', $secondImageName, 'public');
-            } else {
-                $secondImageName = null;
-            }
+    public function store(Request $request)
+{
+    DB::beginTransaction();
 
-            // Xử lý slug không trùng
-            $baseSlug = $request->filled('slug') ? Str::slug($request->slug) : Str::slug($request->name);
-            $slug = $baseSlug;
-            $i = 1;
-            while (Product::where('slug', $slug)->exists()) {
-                $slug = $baseSlug . '-' . $i++;
-            }
+    try {
+        $filename = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('products', $filename, 'public');
+        }
 
-            // Tạo sản phẩm
-            $product = Product::create([
-                'name' => $request->name,
-                'slug' => $slug,
-                'description' => $request->description,
-                'image' => $filename,
-                'second_image' => $secondImageName,
-                'status' => $request->status,
-            ]);
+        $secondImageName = null;
+        if ($request->hasFile('second_image')) {
+            $secondImage = $request->file('second_image');
+            $secondImageName = time() . '_second_' . $secondImage->getClientOriginalName();
+            $secondImage->storeAs('products', $secondImageName, 'public');
+        }
 
-            // Gắn danh mục
-            if ($request->filled('categories')) {
-                $categoryIds = $request->input('categories');
+        // Tạo slug duy nhất
+        $baseSlug = $request->filled('slug') ? Str::slug($request->slug) : Str::slug($request->name);
+        $slug = $baseSlug;
+        $i = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $i++;
+        }
 
-                // Nếu là chuỗi (VD: "1,2,3") thì explode
-                if (is_string($categoryIds)) {
-                    $categoryIds = explode(',', $categoryIds);
-                }
+        // Tạo sản phẩm
+        $product = Product::create([
+            'name' => $request->name,
+            'slug' => $slug,
+            'description' => $request->description,
+            'image' => $filename,
+            'second_image' => $secondImageName,
+            'status' => $request->status ?? 1,
+        ]);
 
-                // Nếu là object có mảng bên trong
-                if (is_array($categoryIds)) {
-                    $categoryIds = array_map(function ($cat) {
-                        return is_array($cat) ? ($cat['id'] ?? null) : $cat;
-                    }, $categoryIds);
-                }
+        // Gắn danh mục (categories)
+        $categoryIds = $request->input('categories');
+        if (is_string($categoryIds)) {
+            $categoryIds = json_decode($categoryIds, true);
+        }
+        if (is_array($categoryIds)) {
+            $categoryIds = array_map(fn($cat) => is_array($cat) ? ($cat['id'] ?? null) : $cat, $categoryIds);
+            $product->categories()->sync(array_filter($categoryIds));
+        }
 
-                // Gắn vào bảng trung gian
-                $product->categories()->sync(array_filter($categoryIds));
-            }
+        // Gắn các thuộc tính biến thể (product_attributes)
+        $productAttributes = $request->input('product_attributes');
+        if (is_string($productAttributes)) {
+            $productAttributes = json_decode($productAttributes, true);
+        }
 
-            // Tạo biến thể
-            if ($request->has('product_attributes') && is_array($request->product_attributes)) {
-                foreach ($request->product_attributes as $pa) {
-                    $productAttr = ProductAttribute::create([
-                        'product_id' => $product->id,
-                        'price' => $pa['price'],
-                        'sale_price' => $pa['sale_price'],
-                        'stock_quantity' => $pa['stock_quantity'],
-                        'status' => $pa['status'] ?? 1,
-                    ]);
+        if (is_array($productAttributes)) {
+            foreach ($productAttributes as $pa) {
+                $productAttr = ProductAttribute::create([
+                    'product_id' => $product->id,
+                    'price' => $pa['price'],
+                    'sale_price' => $pa['sale_price'],
+                    'stock_quantity' => $pa['stock_quantity'],
+                    'status' => $pa['status'] ?? 1,
+                ]);
 
-                    if (isset($pa['attributes']) && is_array($pa['attributes'])) {
-                        foreach ($pa['attributes'] as $attr) {
-                            AttributeValue::create([
-                                'product_attribute_id' => $productAttr->id,
-                                'attribute_id' => $attr['attribute_id'],
-                                'value' => $attr['value'],
-                                'status' => 1,
-                            ]);
-                        }
+                // Lưu giá trị thuộc tính
+                if (!empty($pa['attributes']) && is_array($pa['attributes'])) {
+                    foreach ($pa['attributes'] as $attr) {
+                        AttributeValue::create([
+                            'product_attribute_id' => $productAttr->id,
+                            'attribute_id' => $attr['attribute_id'],
+                            'value' => $attr['value'],
+                            'status' => 1,
+                        ]);
                     }
                 }
             }
-
-            DB::commit();
-            return response()->json(['message' => 'Thêm sản phẩm thành công']);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
         }
+
+        DB::commit();
+        return response()->json(['message' => 'Thêm sản phẩm thành công']);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => $e->getMessage()], 500);
     }
+}
+
 
     public function update(Request $request, $id)
     {
@@ -129,7 +147,6 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            // Cập nhật ảnh chính
             if ($request->hasFile('image')) {
                 if ($product->image) {
                     Storage::disk('public')->delete('products/' . $product->image);
@@ -141,7 +158,6 @@ class ProductController extends Controller
                 $filename = $product->image;
             }
 
-            // Cập nhật ảnh phụ
             if ($request->hasFile('second_image')) {
                 if ($product->second_image) {
                     Storage::disk('public')->delete('products/' . $product->second_image);
@@ -153,7 +169,6 @@ class ProductController extends Controller
                 $secondImageName = $product->second_image;
             }
 
-            // Xử lý slug cập nhật
             $baseSlug = $request->filled('slug') ? Str::slug($request->slug) : Str::slug($request->name);
             $slug = $baseSlug;
             $i = 1;
@@ -161,7 +176,6 @@ class ProductController extends Controller
                 $slug = $baseSlug . '-' . $i++;
             }
 
-            // Cập nhật sản phẩm
             $product->update([
                 'name' => $request->name,
                 'slug' => $slug,
@@ -170,36 +184,29 @@ class ProductController extends Controller
                 'second_image' => $secondImageName,
                 'status' => $request->status,
             ]);
-
-            // Cập nhật danh mục
-            if ($request->filled('categories')) {
-                $categoryIds = $request->input('categories');
-
-                // Nếu là chuỗi (VD: "1,2,3") thì explode
-                if (is_string($categoryIds)) {
-                    $categoryIds = explode(',', $categoryIds);
-                }
-
-                // Nếu là object có mảng bên trong
-                if (is_array($categoryIds)) {
-                    $categoryIds = array_map(function ($cat) {
-                        return is_array($cat) ? ($cat['id'] ?? null) : $cat;
-                    }, $categoryIds);
-                }
-
-                // Gắn vào bảng trung gian
+            $categoryIds = $request->input('categories');
+            if (is_string($categoryIds)) {
+                $categoryIds = json_decode($categoryIds, true);
+            }
+            if (is_object($categoryIds)) {
+                $categoryIds = [ $categoryIds ];
+            }
+            if (is_array($categoryIds)) {
+                $categoryIds = array_map(fn($cat) => is_array($cat) ? ($cat['id'] ?? null) : $cat, $categoryIds);
                 $product->categories()->sync(array_filter($categoryIds));
             }
 
-
-            // Xóa cũ - tạo mới
             $product->attributes()->each(function ($pa) {
                 $pa->attributeValues()->delete();
                 $pa->delete();
             });
 
-            if ($request->has('product_attributes') && is_array($request->product_attributes)) {
-                foreach ($request->product_attributes as $pa) {
+            $productAttributes = is_string($request->product_attributes)
+                ? json_decode($request->product_attributes, true)
+                : $request->product_attributes;
+
+            if (is_array($productAttributes)) {
+                foreach ($productAttributes as $pa) {
                     $productAttr = ProductAttribute::create([
                         'product_id' => $product->id,
                         'price' => $pa['price'],
@@ -208,7 +215,7 @@ class ProductController extends Controller
                         'status' => $pa['status'] ?? 1,
                     ]);
 
-                    if (isset($pa['attributes']) && is_array($pa['attributes'])) {
+                    if (!empty($pa['attributes']) && is_array($pa['attributes'])) {
                         foreach ($pa['attributes'] as $attr) {
                             AttributeValue::create([
                                 'product_attribute_id' => $productAttr->id,
@@ -229,18 +236,15 @@ class ProductController extends Controller
         }
     }
 
-
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
 
-        // Xóa biến thể và attribute_values
         $product->attributes()->each(function ($pa) {
             $pa->attributeValues()->delete();
             $pa->delete();
         });
 
-        // Xóa hình ảnh
         if ($product->image) {
             Storage::disk('public')->delete('products/' . $product->image);
         }
@@ -248,10 +252,7 @@ class ProductController extends Controller
             Storage::disk('public')->delete('products/' . $product->second_image);
         }
 
-        // Xóa liên kết danh mục
         $product->categories()->detach();
-
-        // Xóa sản phẩm
         $product->delete();
 
         return response()->json(['message' => 'Đã xóa sản phẩm thành công']);
